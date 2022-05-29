@@ -149,16 +149,8 @@
               draggable="true"
               ></div>
           <v-container>
-            <h2>Options</h2>
-            <v-text-field
-                label="Title"
-                :value="timeline.timeline.title"
-                @input="handleInputTitle"
-                placeholder="Untitled timeline" persistent-placeholder
-              ></v-text-field>
-            <v-textarea label="Changelog" placeholder="No changes yet" persistent-placeholder>
-
-            </v-textarea>
+            <EditTimelineFrom></EditTimelineFrom>
+            <EditEventForm></EditEventForm>
           </v-container>
           </div>
         </div>
@@ -173,7 +165,9 @@ import EditGroupDialog from "../components/EditGroupDialog.vue";
 import NavigationBar from "../components/NavigationBar.vue";
 import TimelineDays from "../components/TimelineDays.vue";
 import TimelineEvents from "../components/TimelineEvents.vue";
-import _ from 'lodash'
+import EditEventForm from "../components/EditEventForm.vue";
+import EditTimelineFrom from "../components/EditTimelineForm.vue";
+//import _ from 'lodash'
 
 var dragImage = document.createElement('img');
 dragImage.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
@@ -186,8 +180,10 @@ export default {
     EditGroupDialog,
     NavigationBar,
     TimelineDays,
-    TimelineEvents
-  },
+    TimelineEvents,
+    EditEventForm,
+    EditTimelineFrom,
+},
   mounted() {
     this.panelWidth = localStorage.getItem('rightPanelWidth');
     if (!this.panelWidth) 
@@ -275,48 +271,6 @@ export default {
     ...mapState(["timeline", "fromDate", "toDate"]),
   },
   methods: {
-    moveBy: function (deltaX) {
-      this.scroll.x = Math.min(
-        this.leftBlockWidth,
-        Math.max(-this.display.maxX + 10, this.scroll.x + deltaX)
-      );
-    },
-    handleScroll(event) {
-      event.stopPropagation();
-      event.preventDefault();
-      this.moveBy(-event.deltaX);
-      return false;
-    },
-    handleScrollTouch() {
-      console.log("scroll");
-    },
-    dragStartHandler(event) {
-      this.scroll.touchStartX = event.touches[0].clientX;
-      event.stopPropagation();
-    },
-    movingHandler(event) {
-      this.moveBy(event.touches[0].clientX - this.scroll.touchStartX);
-      this.scroll.touchStartX = event.touches[0].clientX;
-      event.stopPropagation();
-    },
-    handleDrag() {
-      console.log("drag");
-    },
-    handleMouseOver() {
-      this.handlerDisplay = "block";
-    },
-    handleMouseOut() {
-      this.handlerDisplay = "none";
-      this.highlightedDayNum = -1;
-    },
-    handleMouseMove(event) {
-      this.handlerX =
-        Math.round((event.offsetX - this.scroll.x - 15) / 25) * 25;
-      this.handlerY = Math.round((event.offsetY - 15) / 25) * 25;
-      this.highlightedDayNum = Math.round(
-        (event.offsetX - this.scroll.x - 15) / 25
-      );
-    },
     handleMouseDown(event) {
       let dayNum = Math.round((event.offsetX - this.scroll.x - 15) / 25);
       let groupNum = -1;
@@ -333,8 +287,6 @@ export default {
       startDate.setDate(startDate.getDate() + dayNum);
       this.createEvent(groupNum, {
         date_start: startDate.toISOString().slice(0, 10),
-        //line:line-this.timeline.groups[groupNum].top,
-        //date_start: new Date(this.display.days[dayNum].date),
       });
     },
     handleClickEvent(groupNum, eventNum) {
@@ -373,15 +325,7 @@ export default {
     },
     handleSplitterDragEnd() {
       localStorage.setItem('rightPanelWidth', this.panelWidth);
-    },
-    handleInputTitle: _.debounce(function(newTitle) {
-      this.$store.dispatch("timeline/updateTimelineAction",{
-        timeline:this.timeline.timeline,
-        changes:{
-          title:newTitle
-        }
-      });
-    }, 300)
+    }
 
   },
 };
