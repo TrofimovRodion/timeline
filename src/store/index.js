@@ -10,8 +10,10 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     fromDate: "2022-01-01",
-    toDate: "2022-12-31"
-  },
+    toDate: "2022-12-31",
+    lineHeight:40,
+    cellWidth:25,
+},
   getters: {},
   mutations: {},
   actions: {},

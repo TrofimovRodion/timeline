@@ -4,6 +4,7 @@ import getters from './getters.js'
 
 const state = {
     id: null,
+    selectedEventId:null,
     title: '',
     timeline: {},
     groups: []

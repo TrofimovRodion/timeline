@@ -154,7 +154,11 @@
                 label="Title"
                 :value="timeline.timeline.title"
                 @input="handleInputTitle"
+                placeholder="Untitled timeline" persistent-placeholder
               ></v-text-field>
+            <v-textarea label="Changelog" placeholder="No changes yet" persistent-placeholder>
+
+            </v-textarea>
           </v-container>
           </div>
         </div>

@@ -1,6 +1,12 @@
 <style scoped>
+.calendar {
+  position: sticky;
+  top:0px;
+  z-index: 1;
+}
 .months {
     display: flex;
+    width:max-content;
 }
 .month {
     min-width:24px;
@@ -15,6 +21,8 @@
 }
 .days {
     display: flex;
+    width:max-content;
+    background:#fff;
 }
 .day {
     min-width:24px;
@@ -28,9 +36,9 @@
 }
 </style>
 <template>
-    <div>
+    <div class="calendar">
         <div class="months">
-            <div v-for="month in display.months" :key="month.date" class="month" :style="`min-width:`+(month.width*25-1)+`px`">
+            <div v-for="month in display.months" :key="month.date" class="month" :style="`min-width:`+(month.width*cellWidth-1)+`px`">
                 {{month.month}}
             </div>
         </div>
@@ -96,10 +104,10 @@ export default {
       return {
         days:days,
         months: months,
-        maxX: 25 * days.length
+        maxX: this.cellWidth * days.length
       }
     },
-    ...mapState(["fromDate", "toDate"]),
+    ...mapState(["fromDate", "toDate", "lineHeight", "cellWidth"]),
   },
 };
 </script>

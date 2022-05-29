@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = 'http://localhost:3000/'
+const url = 'http://192.168.1.9:3000/'
 axios.defaults.withCredentials = true;
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
