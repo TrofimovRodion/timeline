@@ -1,0 +1,78 @@
+html,* {
+    font-family: SF Pro Text,SF Pro Icons,Helvetica Neue,Helvetica,Arial,sans-serif;
+}
+html, body {
+    overflow-x: hidden;
+}
+body {
+    position: relative;
+    
+}
+html,body {
+    height:100%;
+}
+  
+.timelineWrap {
+    width:100%;    
+    height:100%;
+    overflow:auto;
+    background:#c9c9c9;
+}
+.timeline {
+    width:100%;
+    height:100%;
+    background:#c9c9c9;
+}
+.days .day span{
+    display: block;
+    width:24px;
+    height:18px;
+    text-align: center;
+    padding:3px 0;
+    margin-right:1px;
+    margin-bottom:1px;
+    background:#fff;
+}
+.months .month span{
+    display: block;
+    height:18px;
+    text-align: center;
+    padding:3px 0;
+    margin-right:1px;
+    margin-bottom:1px;
+    background:#fff;
+}
+text {
+    font-size:0.8em;
+}
+.groupTitleWrap {
+    display: table-cell;
+    vertical-align: middle;
+}
+.groupTitle {
+    font-size:0.8em;
+    font-weight: bold;
+}
+.panels {
+    display: flex;
+    align-items:stretch;
+    height: 100%;
+}
+.panel.rightPanel {
+    width:200px;
+    position:relative;
+    overflow:auto;
+}
+.panel.mainPanel {
+    display: block;
+    flex-grow:1;
+    overflow:auto;
+}
+.panelSplitter {
+    position:absolute;
+    height:100%;
+    background:#00000000;
+    border-left:1px solid #c0c0c0;
+    width:5px;
+    cursor:col-resize;
+}
