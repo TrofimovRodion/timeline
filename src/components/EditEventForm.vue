@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="editEvent" flat>
+  <v-card flat>
     <v-card-title> Edit event </v-card-title>
 
     <v-card-text>

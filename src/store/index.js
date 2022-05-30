@@ -13,6 +13,9 @@ export default new Vuex.Store({
     toDate: "2022-12-31",
     lineHeight:40,
     cellWidth:25,
+    highlightedDays:{
+      start:0,end:0
+    }
 },
   getters: {},
   mutations: {},

@@ -149,8 +149,8 @@
               draggable="true"
               ></div>
           <v-container>
-            <EditTimelineFrom></EditTimelineFrom>
-            <EditEventForm></EditEventForm>
+            <EditTimelineFrom v-if="!timeline.selectedEventId"></EditTimelineFrom>
+            <EditEventForm v-if="timeline.selectedEventId"></EditEventForm>
           </v-container>
           </div>
         </div>

@@ -34,6 +34,9 @@
     text-align:center;
     line-height:25px;
 }
+.day.highlight {
+  background:#D8E0EF;
+}
 </style>
 <template>
     <div class="calendar">
@@ -43,7 +46,7 @@
             </div>
         </div>
         <div class="days">
-            <div v-for="day in display.days" :key="day.date" class="day">
+            <div v-for="day in display.days" :key="day.date" :class="`day`+(day.highlight?` highlight`:``)">
                 {{day.day}}
             </div>
         </div>
@@ -80,10 +83,15 @@ export default {
       let curMonth = -1;
       let totalWidth = 0;
       for (let i = 0; i < diffDays; i++) {
+        let highlight = false
+        if (this.highlightedDays.start <= fromDate && fromDate < this.highlightedDays.end) {
+          highlight = true;
+        }
         days.push({
           isWeekend: fromDate.getDay() == 0 || fromDate.getDay() == 6,
           day: fromDate.getDate(),
           date: fromDate.toISOString(),
+          highlight: highlight
         });
         if (curMonth != fromDate.getMonth()) {
           curMonth = fromDate.getMonth();
@@ -107,7 +115,7 @@ export default {
         maxX: this.cellWidth * days.length
       }
     },
-    ...mapState(["fromDate", "toDate", "lineHeight", "cellWidth"]),
+    ...mapState(["timeline","fromDate", "toDate", "lineHeight", "cellWidth", "highlightedDays"]),
   },
 };
 </script>

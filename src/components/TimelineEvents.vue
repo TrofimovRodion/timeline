@@ -33,7 +33,7 @@
 }
 </style>
 <template>
-  <div class="groups">
+  <div class="groups" @click="deselectEvent()">
     <div
       class="group"
       v-for="group in display.groups"
@@ -46,7 +46,7 @@
             :key="event.key"
             :class="`event`+((selectedEventKey==event.key)?` selected`:``)"
             :style="getEventStyle(event)"
-            @click="selectEvent(event)"
+            @click="selectEvent($event, event)"
             draggable="true"
         >
             <div class="eventTitle">{{ event.title }}</div>
@@ -108,13 +108,16 @@ export default {
         groups: groups,
       };
     },
-    ...mapState(["timeline", "fromDate", "toDate", "lineHeight", "cellWidth"]),
+    ...mapState(["timeline", "fromDate", "toDate", "lineHeight", "cellWidth", "highlightedDays"]),
   },
   methods: {
     getGroupStyle(group) {
       let style = "";
       style += "top:" + group.top * this.lineHeight+"px;";
       style += "height:" + group.height * this.lineHeight+"px;";
+      if (this.timeline.selectedEventId && this.$store.getters["timeline/getEventById"](this.timeline.selectedEventId).group._id == group._id) {
+        style += "background:#00000011;";
+      }
       return style;
     },
     getEventStyle(event) {
@@ -126,9 +129,19 @@ export default {
       style += "width:" + event.duration * this.cellWidth + "px;";
       return style;
     },
-    selectEvent(event) {
+    selectEvent(e, event) {
+      const oneDay = 24*60*60*1000;
         this.timeline.selectedEventId = event._id
         this.selectedEventKey = event.key
+        this.highlightedDays.start = new Date(this.fromDate)-0+event.startdaynum*oneDay;
+        this.highlightedDays.end = this.highlightedDays.start+event.duration*oneDay;
+      e.stopPropagation();
+    },
+    deselectEvent() {
+      this.timeline.selectedEventId = 0;
+      this.selectedEventKey = -1;
+      this.highlightedDays.start = 0
+      this.highlightedDays.end = 0
     }
   },
 };
