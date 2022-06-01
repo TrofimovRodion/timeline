@@ -20,7 +20,6 @@
   height: 29px;
   border-radius: 3px;
   overflow: hidden;
-  display: flex;
   cursor: pointer;
   align-items: center;
   border: 1px solid #ffffff00;
@@ -29,22 +28,40 @@
 }
 .event.selected {
   border: 1px solid #fff;
+  box-shadow: 0px 2px 5px #00000088;
 }
 .eventTitle {
   text-overflow: ellipsis;
   width: 100%;
   margin: 2px 4px;
   font-size: 0.8em;
+  line-height: 13px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .newEventHandler {
   position: absolute;
   width: 25px;
   height: 39px;
   background: #fff;
-  display: flex;
-  align-items: center;
   border-radius: 3px;
   pointer-events: none;
+}
+.eventContent {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.eventExpander {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  background: #fff;
+  width: 5px;
+  cursor: col-resize;
+  height: 100%;
 }
 </style>
 <template>
@@ -77,7 +94,17 @@
           @dragend="handleEventDragEnd($event, displayEvent)"
           draggable="true"
         >
-          <div class="eventTitle">{{ displayEvent.event.title }}</div>
+          <div class="eventContent">
+            <div class="eventTitle">{{ displayEvent.event.title }}</div>
+            <div
+              v-if="selectedEventKey == displayEvent.key"
+              class="eventExpander"
+              @dragstart="handleEventExpanderDragStart($event, displayEvent)"
+              @drag="handleEventExpanderDrag($event, displayEvent)"
+              @dragend="handleEventExpanderDragEnd($event, displayEvent)"
+              draggable="true"
+            ></div>
+          </div>
         </div>
       </div>
     </div>
@@ -97,6 +124,7 @@ export default {
     return {
       selectedEventKey: -1,
       dragStart: {},
+      expanderDragStart: {},
       handlerPos: { x: -100, y: -100 },
       selectedLocalEvent: null,
     };
@@ -187,10 +215,11 @@ export default {
       return style;
     },
     handleMouseMove(e) {
-      if (e.target.className!='group' && e.target.className!='groups') {
+      if (e.target.className != "group" && e.target.className != "groups") {
         this.handlerPos = {
-          x:-100,y:-100
-        }
+          x: -100,
+          y: -100,
+        };
         return;
       }
       let rect = e.currentTarget.getBoundingClientRect();
@@ -213,7 +242,7 @@ export default {
         let dayNum = Math.round(
           (e.clientX - rect.left - this.cellWidth / 2) / this.cellWidth
         );
-        let groupNum = this.timeline.groups.length-1;
+        let groupNum = this.timeline.groups.length - 1;
         let line = Math.round(
           (e.clientY - rect.top - this.lineHeight / 2) / this.lineHeight
         );
@@ -250,6 +279,42 @@ export default {
       this.timeline.selectedEventId = 0;
       this.selectedEventKey = -1;
       this.$store.dispatch("selectEventAction", { event: null });
+    },
+    handleEventExpanderDragStart(e, displayEvent) {
+      e.dataTransfer.setDragImage(dragImage, 0, 0);
+      this.expanderDragStart = {
+        x: e.clientX,
+        duration: displayEvent.event.duration,
+      };
+      e.stopPropagation();
+    },
+    handleEventExpanderDrag(e, displayEvent) {
+      if (!e.clientX) return;
+      let event = this.$store.getters["timeline/getEventById"](
+        displayEvent.event._id
+      );
+      let cellsDiff = Math.round(
+        (e.clientX - this.expanderDragStart.x) / this.cellWidth
+      );
+      let duration = Math.max(1, this.expanderDragStart.duration + cellsDiff);
+      Vue.set(event, "duration", duration);
+      if (this.timeline.selectedEventId == displayEvent.event._id) {
+        this.$store.dispatch("selectEventAction", {
+          event: this.selectedLocalEvent.event,
+          startdaynum: displayEvent.startdaynum,
+        });
+      }
+      e.stopPropagation();
+    },
+    handleEventExpanderDragEnd(e, displayEvent) {
+      let event = this.$store.getters["timeline/getEventById"](
+        displayEvent.event._id
+      );
+      this.$store.dispatch("timeline/updateEventAction", {
+        event: event,
+        changes: { duration: displayEvent.event.duration },
+      });
+      e.stopPropagation();
     },
     handleEventDragStart(e, displayEvent) {
       e.dataTransfer.setDragImage(dragImage, 0, 0);
