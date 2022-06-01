@@ -3,7 +3,6 @@
     <v-card-title> Edit event </v-card-title>
 
     <v-card-text>
-      <v-container>
         <v-row>
           <v-col>
             <v-text-field
@@ -105,7 +104,6 @@
             </v-text-field>
           </v-col>
         </v-row>
-      </v-container>
     </v-card-text>
 
     <v-divider></v-divider>

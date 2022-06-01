@@ -24,6 +24,7 @@
   cursor: pointer;
   align-items: center;
   border: 1px solid #ffffff00;
+  mix-blend-mode: multiply;
   box-shadow: 0px 1px 4px #00000055;
 }
 .event.selected {
@@ -43,6 +44,7 @@
   display: flex;
   align-items: center;
   border-radius: 3px;
+  pointer-events: none;
 }
 </style>
 <template>
@@ -177,7 +179,7 @@ export default {
     },
     getEventStyle(displayEvent) {
       let style = "";
-      style += "background:" + displayEvent.event.group.background + ";";
+      style += "background-color:" + displayEvent.event.group.background + ";";
       style += "color:" + displayEvent.event.group.foreground + ";";
       style += "left:" + displayEvent.startdaynum * this.cellWidth + "px;";
       style += "top:" + displayEvent.event.line * this.lineHeight + "px;";
@@ -185,6 +187,12 @@ export default {
       return style;
     },
     handleMouseMove(e) {
+      if (e.target.className!='group' && e.target.className!='groups') {
+        this.handlerPos = {
+          x:-100,y:-100
+        }
+        return;
+      }
       let rect = e.currentTarget.getBoundingClientRect();
       this.handlerPos = {
         x:
@@ -205,7 +213,7 @@ export default {
         let dayNum = Math.round(
           (e.clientX - rect.left - this.cellWidth / 2) / this.cellWidth
         );
-        let groupNum = -1;
+        let groupNum = this.timeline.groups.length-1;
         let line = Math.round(
           (e.clientY - rect.top - this.lineHeight / 2) / this.lineHeight
         );

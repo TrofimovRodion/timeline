@@ -26,17 +26,15 @@
             </div>
           </div>
         </div>
-          <div class="panel rightPanel" :style="`min-width:`+panelWidth+`px`" ref="rightPanel">
+          <div class="panel rightPanel elevation-5" :style="`min-width:`+panelWidth+`px`" ref="rightPanel">
             <div class="panelSplitter"
               @dragstart="handleSplitterDragStart"
               @drag="handleSplitterDrag"
               @dragend="handleSplitterDragEnd"
               draggable="true"
               ></div>
-          <v-container>
             <EditTimelineFrom v-if="!timeline.selectedEventId"></EditTimelineFrom>
             <EditEventForm v-if="timeline.selectedEventId"></EditEventForm>
-          </v-container>
           </div>
         </div>
     </v-main>

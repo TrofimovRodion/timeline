@@ -1,20 +1,23 @@
 <template>
-  <div>
-    <h2>Options</h2>
-    <v-text-field
-      label="Title"
-      :value="timeline.timeline.title"
-      @input="handleInputTitle"
-      placeholder="Untitled timeline"
-      persistent-placeholder
-    ></v-text-field>
-    <v-textarea
-      label="Changelog"
-      placeholder="No changes yet"
-      persistent-placeholder
-    >
-    </v-textarea>
-  </div>
+  <v-card flat>
+    <v-card-title> Edit timeline details </v-card-title>
+
+    <v-card-text>
+        <v-text-field
+        label="Title"
+        :value="timeline.timeline.title"
+        @input="handleInputTitle"
+        placeholder="Untitled timeline"
+        persistent-placeholder
+        ></v-text-field>
+        <v-textarea
+        label="Changelog"
+        placeholder="No changes yet"
+        persistent-placeholder
+        >
+        </v-textarea>
+    </v-card-text>
+    </v-card>
 </template>
 <script>
 import _ from 'lodash'
