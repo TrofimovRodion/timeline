@@ -25,7 +25,7 @@ export default {
     },
     async createEvent(timelineId, groupId, eventDetails) {
         let data = (await axios.post(url + 'timeline/' + timelineId + '/events/create', Object.assign(eventDetails, {
-            group: groupId
+            groupId: groupId
         }))).data
         return data;
     },

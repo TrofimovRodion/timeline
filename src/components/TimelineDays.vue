@@ -3,6 +3,7 @@
   position: sticky;
   top:0px;
   z-index: 1;
+  width: max-content;
 }
 .months {
     display: flex;
@@ -70,12 +71,13 @@ const c_MonthNames = [
   "December",
 ];
 
+const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+
 export default {
   computed: {
     display: function () {
       let fromDate = new Date(this.fromDate);
       let toDate = new Date(this.toDate);
-      const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
 
       const diffDays = Math.round(Math.abs((toDate - fromDate) / oneDay)) + 1;
       let days = [];
@@ -84,7 +86,7 @@ export default {
       let totalWidth = 0;
       for (let i = 0; i < diffDays; i++) {
         let highlight = false
-        if (this.highlightedDays.start <= fromDate && fromDate < this.highlightedDays.end) {
+        if (this.highlightedDays && this.highlightedDays.start <= fromDate && fromDate < this.highlightedDays.end) {
           highlight = true;
         }
         days.push({

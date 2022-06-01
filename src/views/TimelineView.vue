@@ -19,133 +19,18 @@
             @close="saveGroupDialog"
           />
 
-          <div id="timeline" class="timelineWrap">
-            <TimelineDays></TimelineDays>
-            <TimelineEvents></TimelineEvents>
-            <!--<svg
-              class="timeline"
-              v-on:wheel="handleScroll"
-              v-on:scroll="handleScrollTouch"
-              v-on:touchstart="dragStartHandler"
-              v-on:touchmove="movingHandler"
-              v-on:mouseover="handleMouseOver"
-              v-on:mouseout="handleMouseOut"
-              v-on:mousemove="handleMouseMove"
-            >
-              <g></g>
-              <g :transform="scrollTransform">
-                <rect
-                  :x="handlerX"
-                  :y="handlerY"
-                  rx="4"
-                  ry="4"
-                  width="25"
-                  height="25"
-                  :style="`display:${handlerDisplay};fill:rgb(255, 255, 255);opacity:0.2`"
-                  v-on:click="handleMouseDown"
-                />
-                <svg x="0" y="0" style="overflow: visible">
-                  <svg
-                    v-for="(group, groupNum) in display.groups"
-                    :key="group._id + '000'"
-                    x="0"
-                    :y="25 * group.top"
-                    style="overflow: visible"
-                  >
-                    <svg
-                      v-for="(event, eventNum) in group.events"
-                      :key="event.key"
-                      :x="event.startdaynum * 25"
-                      :y="25 * event.line"
-                      :width="25 * event.duration"
-                      height="25"
-                      style="overflow: hidden"
-                      v-on:click="handleClickEvent(groupNum, eventNum)"
-                    >
-                      <title>{{ event.title }}</title>
-                      <rect
-                        x="1"
-                        y="0"
-                        rx="3"
-                        ry="3"
-                        :width="25 * event.duration"
-                        height="24"
-                        :style="`fill:${group.background}`"
-                      />
-                      <text
-                        x="5"
-                        y="18"
-                        :width="25 * event.duration - 5"
-                        :style="`fill:${group.foreground}`"
-                      >
-                        {{ event.title }}
-                      </text>
-                    </svg>
-                  </svg>
-                </svg>
-                
-              </g>
-
-              <svg x="0" y="0" style="overflow: visible">
-                <rect
-                  x="0"
-                  y="0"
-                  :width="leftBlockWidth"
-                  height="100%"
-                  style="fill: #d9d9d9"
-                />
-                <rect
-                  :x="leftBlockWidth - 1"
-                  y="0"
-                  width="1"
-                  height="100%"
-                  style="fill: #f9f9f9"
-                />
-                <rect
-                  :x="leftBlockWidth - 5"
-                  y="50%"
-                  width="5"
-                  height="20"
-                  style="fill: rgb(17, 17, 17); opacity: 0.5"
-                  v-on:mousedown="handleDrag"
-                />
-                <svg
-                  v-for="group in display.groups"
-                  :key="group._id"
-                  x="0"
-                  :y="46 * group.top"
-                  v-on:click="handleClickGroup(group._id)"
-                >
-                  <rect
-                    x="0"
-                    y="0"
-                    :width="leftBlockWidth"
-                    :height="46 * group.height - 1"
-                    :style="`fill:${group.background};opacity:0.5`"
-                  />
-                  <foreignObject
-                    x="5"
-                    y="5"
-                    class="groupTitleWrap"
-                    :width="leftBlockWidth - 10"
-                    :height="46 * group.height - 10"
-                  >
-                    <span
-                      class="groupTitle"
-                      xmlns="http://www.w3.org/1999/xhtml"
-                      >{{ group.title }}</span
-                    >
-                  </foreignObject>
-                </svg>
-              </svg>
-            </svg>-->
+          <div id="timeline" class="timeline">
+            <div class="timelineWrap">
+              <TimelineDays></TimelineDays>
+              <TimelineEvents></TimelineEvents>
+            </div>
           </div>
         </div>
           <div class="panel rightPanel" :style="`min-width:`+panelWidth+`px`" ref="rightPanel">
             <div class="panelSplitter"
-              v-on:dragstart="handleSplitterDragStart"
-              v-on:drag="handleSplitterDrag"
-              v-on:dragend="handleSplitterDragEnd"
+              @dragstart="handleSplitterDragStart"
+              @drag="handleSplitterDrag"
+              @dragend="handleSplitterDragEnd"
               draggable="true"
               ></div>
           <v-container>
@@ -314,12 +199,10 @@ export default {
     },
     handleSplitterDragStart(e) {
       this.dragStartX = e.clientX;
-      //e.dataTransfer.setData('text/plain', 'This text may be dragged')
       e.dataTransfer.setDragImage(dragImage, 0, 0);
       this.panelWidthDragStart = this.panelWidth;
     },
     handleSplitterDrag(e) {
-      //console.log(e.screenX - this.dragStartX);
       if (!e.clientX) return;
       this.panelWidth = this.panelWidthDragStart - e.clientX + this.dragStartX;
     },
