@@ -145,6 +145,7 @@ export default {
           let renderedEvent = {
             key: event._id,
             event: event,
+            group: this.timeline.groups[i],
             startdaynum: Math.ceil(
               (new Date(event.date_start) - new Date(this.fromDate)) /
                 (1000 * 60 * 60 * 24)
@@ -199,7 +200,7 @@ export default {
         this.timeline.selectedEventId &&
         this.$store.getters["timeline/getEventById"](
           this.timeline.selectedEventId
-        ).group._id == displayGroup.group._id
+        ).groupId == displayGroup.group._id
       ) {
         style += "background:#00000011;";
       }
@@ -207,8 +208,8 @@ export default {
     },
     getEventStyle(displayEvent) {
       let style = "";
-      style += "background-color:" + displayEvent.event.group.background + ";";
-      style += "color:" + displayEvent.event.group.foreground + ";";
+      style += "background-color:" + displayEvent.group.background + ";";
+      style += "color:" + displayEvent.group.foreground + ";";
       style += "left:" + displayEvent.startdaynum * this.cellWidth + "px;";
       style += "top:" + displayEvent.event.line * this.lineHeight + "px;";
       style += "width:" + displayEvent.event.duration * this.cellWidth + "px;";
@@ -270,6 +271,7 @@ export default {
       this.$store.dispatch("selectEventAction", {
         event: displayEvent.event,
         startdaynum: displayEvent.startdaynum,
+        duration: displayEvent.duration
       });
       this.selectedLocalEvent = displayEvent;
       e.stopPropagation();
@@ -298,12 +300,11 @@ export default {
       );
       let duration = Math.max(1, this.expanderDragStart.duration + cellsDiff);
       Vue.set(event, "duration", duration);
-      if (this.timeline.selectedEventId == displayEvent.event._id) {
-        this.$store.dispatch("selectEventAction", {
-          event: this.selectedLocalEvent.event,
-          startdaynum: displayEvent.startdaynum,
-        });
-      }
+      this.$store.dispatch("selectEventAction", {
+        event: this.selectedLocalEvent.event,
+        startdaynum: displayEvent.startdaynum,
+        duration: duration
+      });
       e.stopPropagation();
     },
     handleEventExpanderDragEnd(e, displayEvent) {
@@ -341,6 +342,7 @@ export default {
         this.$store.dispatch("selectEventAction", {
           event: this.selectedLocalEvent.event,
           startdaynum: displayEvent.startdaynum,
+          duration: displayEvent.duration
         });
       }
     },

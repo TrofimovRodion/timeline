@@ -80,15 +80,15 @@ export default {
     [appendEventMutation](state, { groupNum, eventDetails, skipUpdate }) {
         let newEvent = Object.assign({}, eventDetails);
         const group = state.groups[groupNum];
-        newEvent.group = state.groups[groupNum]
-        newEvent.timeline = state.groups[groupNum].timeline
+        //newEvent.group = state.groups[groupNum]
+        //newEvent.timeline = state.groups[groupNum].timeline
         state.groups[groupNum].events.push(newEvent)
         if (!skipUpdate) {
             this.commit('timeline/updateGroupEventsMutation', group)
         }
     },
     [removeEventMutation](state, { event }) {
-        const group = this.getters['timeline/getGroupById'](event.group._id);
+        const group = this.getters['timeline/getGroupById'](event.groupId);
         group.events = group.events.filter(ev => (ev._id != event._id));
         this.commit('timeline/updateGroupEventsMutation', group)
     },
