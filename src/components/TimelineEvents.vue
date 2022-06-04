@@ -270,8 +270,9 @@ export default {
       this.selectedEventKey = displayEvent.key;
       this.$store.dispatch("selectEventAction", {
         event: displayEvent.event,
+        date_start: displayEvent.event.date_start,
         startdaynum: displayEvent.startdaynum,
-        duration: displayEvent.duration
+        duration: displayEvent.event.duration
       });
       this.selectedLocalEvent = displayEvent;
       e.stopPropagation();
@@ -323,6 +324,7 @@ export default {
         x: e.clientX,
         date_start: displayEvent.event.date_start,
         startdaynum: displayEvent.startdaynum,
+        duration: displayEvent.event.duration
       };
     },
     handleEventDrag(e, displayEvent) {
@@ -341,8 +343,9 @@ export default {
       if (this.timeline.selectedEventId == displayEvent.event._id) {
         this.$store.dispatch("selectEventAction", {
           event: this.selectedLocalEvent.event,
+          date_start: displayEvent.event.date_start,
           startdaynum: displayEvent.startdaynum,
-          duration: displayEvent.duration
+          duration: displayEvent.event.duration
         });
       }
     },
