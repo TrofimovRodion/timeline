@@ -34,7 +34,8 @@
               draggable="true"
               ></div>
             <EditTimelineFrom v-if="!timeline.selectedEventId"></EditTimelineFrom>
-            <EditEventForm v-if="timeline.selectedEventId"></EditEventForm>
+            <EditEventForm v-if="timeline.selectedEventId" :editEventId="timeline.selectedEventId"
+></EditEventForm>
           </div>
         </div>
     </v-main>

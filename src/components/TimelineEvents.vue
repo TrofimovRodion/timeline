@@ -152,7 +152,7 @@ export default {
             ),
           };
           renderedEvents.push(Object.assign({}, renderedEvent));
-          if (event.period) {
+          if (event.period+0) {
             let k = 0;
             while (
               renderedEvent.startdaynum <
@@ -309,11 +309,11 @@ export default {
       e.stopPropagation();
     },
     handleEventExpanderDragEnd(e, displayEvent) {
-      let event = this.$store.getters["timeline/getEventById"](
+      /*let event = this.$store.getters["timeline/getEventById"](
         displayEvent.event._id
-      );
+      );*/
       this.$store.dispatch("timeline/updateEventAction", {
-        event: event,
+        eventId: displayEvent.event._id,
         changes: { duration: displayEvent.event.duration },
       });
       e.stopPropagation();
@@ -350,11 +350,11 @@ export default {
       }
     },
     handleEventDragEnd(e, displayEvent) {
-      let event = this.$store.getters["timeline/getEventById"](
+      /*let event = this.$store.getters["timeline/getEventById"](
         displayEvent.event._id
-      );
+      );*/
       this.$store.dispatch("timeline/updateEventAction", {
-        event: event,
+        eventId: displayEvent.event._id,
         changes: { date_start: displayEvent.event.date_start },
       });
     },

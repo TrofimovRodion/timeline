@@ -29,8 +29,8 @@ export default {
         }))).data
         return data;
     },
-    async updateEvent(event, changes) {
-        let data = (await axios.post(url + 'timeline/' + event.timelineId + '/events/' + event._id + '/update', { changes: changes })).data
+    async updateEvent(timelineId, eventId, changes) {
+        let data = (await axios.post(url + 'timeline/' + timelineId + '/events/' + eventId + '/update', { changes: changes })).data
         return data;
     },
     async removeEvent(event) {

@@ -54,7 +54,7 @@
                   v-on="on"
                   @input="
                     $store.dispatch('timeline/updateEventAction', {
-                      event: editEvent,
+                      eventId: editEvent._id,
                       changes: { date_start: $event },
                     })
                   "
@@ -64,7 +64,7 @@
                 :value="editEvent.date_start"
                 @input="
                   $store.dispatch('timeline/updateEventAction', {
-                    event: editEvent,
+                    eventId: editEvent._id,
                     changes: { date_start: $event },
                   });
                   startDatePicker = false;
@@ -163,26 +163,26 @@ export default {
   },
   methods: {
     remove() {
-      this.$store.dispatch("timeline/removeEventAction", this.editEvent);
+      this.$store.dispatch("timeline/removeEventAction", this.editEventId);
     },
     close() {
       this.$emit("close");
     },
     handleInputTitle: _.debounce(function (newTitle) {
       this.$store.dispatch("timeline/updateEventAction", {
-        event: this.editEvent,
+        eventId: this.editEventId,
         changes: { title: newTitle },
       });
     }, 300),
     handleInputDuration: _.debounce(function (newDuration) {
       this.$store.dispatch("timeline/updateEventAction", {
-        event: this.editEvent,
+        eventId: this.editEventId,
         changes: { duration: newDuration },
       });
     }, 300),
     handleInputPeriod: _.debounce(function (newPeriod) {
       this.$store.dispatch("timeline/updateEventAction", {
-        event: this.editEvent,
+        eventId: this.editEventId,
         changes: { period: newPeriod },
       });
     }, 300),

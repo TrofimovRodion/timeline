@@ -92,7 +92,8 @@ export default {
         group.events = group.events.filter(ev => (ev._id != event._id));
         this.commit('timeline/updateGroupEventsMutation', group)
     },
-    [updateEventMutation](state, { event, changes }) {
+    [updateEventMutation](state, { eventId, changes }) {
+        const event = this.getters['timeline/getEventById'](eventId);
         for (let i in changes) {
             event[i] = changes[i]
         }

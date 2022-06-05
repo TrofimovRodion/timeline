@@ -41,9 +41,9 @@ export default {
         await timelineApi.removeEvent(event);
         commit(removeEventMutation, { event: event })
     },
-    async [updateEventAction]({ commit }, { event, changes }) {
-        let updatedEvent = await timelineApi.updateEvent(event, changes);
-        commit(updateEventMutation, { event: event, changes: updatedEvent })
+    async [updateEventAction]({ commit }, { eventId, changes }) {
+        let updatedEvent = await timelineApi.updateEvent(this.state.timeline.timeline._id, eventId, changes);
+        commit(updateEventMutation, { eventId: eventId, changes: updatedEvent })
     },
     async [removeGroupAction]({ commit }, group) {
         await timelineApi.removeGroup(group);
