@@ -8,11 +8,6 @@
     <v-main style="height:100%">
       <div class="panels" ref="panels">
         <div class="panel mainPanel" ref="mainPanel">
-          <EditEventDialog
-            :editEventId="editEventId"
-            :display="editDialog.display"
-            @close="saveEventDialog"
-          />
           <EditGroupDialog
             :editGroupId="editGroupId"
             :display="editGroupDialog.display"
@@ -44,7 +39,6 @@
 
 <script>
 import { mapState } from "vuex";
-import EditEventDialog from "../components/EditEventDialog.vue";
 import EditGroupDialog from "../components/EditGroupDialog.vue";
 import NavigationBar from "../components/NavigationBar.vue";
 import TimelineDays from "../components/TimelineDays.vue";
@@ -60,7 +54,6 @@ export default {
   name: "TimelineView",
 
   components: {
-    EditEventDialog,
     EditGroupDialog,
     NavigationBar,
     TimelineDays,
@@ -71,7 +64,7 @@ export default {
   mounted() {
     this.panelWidth = localStorage.getItem('rightPanelWidth');
     if (!this.panelWidth) 
-      this.panelWidth = 200;
+      this.panelWidth = 300;
     this.$store.dispatch("timeline/loadTimelineAction", {
       timelineId: this.$route.params.timelineId,
     });
@@ -102,7 +95,7 @@ export default {
       editGroupId: null,
       dragStartX:0,
       panelWidthDragStart:0,
-      panelWidth:200
+      panelWidth:300
     };
   },
   computed: {
@@ -197,13 +190,13 @@ export default {
       this.editGroupDialog.display = false;
     },
     handleSplitterDragStart(e) {
-      this.dragStartX = e.clientX;
+      this.dragStartX = e.screenX;
       e.dataTransfer.setDragImage(dragImage, 0, 0);
       this.panelWidthDragStart = this.panelWidth;
     },
     handleSplitterDrag(e) {
-      if (!e.clientX) return;
-      this.panelWidth = this.panelWidthDragStart - e.clientX + this.dragStartX;
+      if (!e.screenX) return;
+      this.panelWidth = this.panelWidthDragStart - e.screenX + this.dragStartX;
     },
     handleSplitterDragEnd() {
       localStorage.setItem('rightPanelWidth', this.panelWidth);
