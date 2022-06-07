@@ -110,7 +110,7 @@ export default {
         for (let j = 0; j < groups[i].events.length; j++) {
           let event = groups[i].events[j];
           event.key = event._id;
-          event.startdaynum = Math.ceil(
+          event.startcellnum = Math.ceil(
             Math.abs(new Date(event.date_start) - new Date(this.fromDate)) /
               (1000 * 60 * 60 * 24)
           );
@@ -118,7 +118,7 @@ export default {
           if (event.period) {
             let k = 0;
             while (
-              event.startdaynum <
+              event.startcellnum <
               Math.min(
                 1000,
                 Math.ceil(
@@ -129,7 +129,7 @@ export default {
             ) {
               k++;
               event.key = event._id + "_" + k;
-              event.startdaynum += parseInt(event.period);
+              event.startcellnum += parseInt(event.period);
               renderedEvents.push(Object.assign({}, event));
             }
           }
@@ -190,13 +190,13 @@ export default {
       this.editGroupDialog.display = false;
     },
     handleSplitterDragStart(e) {
-      this.dragStartX = e.screenX;
+      this.dragStartX = e.clientX;
       e.dataTransfer.setDragImage(dragImage, 0, 0);
       this.panelWidthDragStart = this.panelWidth;
     },
     handleSplitterDrag(e) {
-      if (!e.screenX) return;
-      this.panelWidth = this.panelWidthDragStart - e.screenX + this.dragStartX;
+      if (!e.clientX) return;
+      this.panelWidth = this.panelWidthDragStart - e.clientX + this.dragStartX;
     },
     handleSplitterDragEnd() {
       localStorage.setItem('rightPanelWidth', this.panelWidth);

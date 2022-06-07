@@ -49,8 +49,8 @@ export default {
         for (let e in sortedEvents) {
             let event = sortedEvents[e]
             event.line = -1
-            let startdaynum = DateTime.fromISO(event.date_start).diff(DateTime.fromISO('2000-01-01'), 'days').as('days')
-            for (let d = startdaynum - 1; d <= startdaynum + event.duration; d++) {
+            let startcellnum = DateTime.fromISO(event.date_start).diff(DateTime.fromISO('2000-01-01'), 'days').as('days')
+            for (let d = startcellnum - 1; d <= startcellnum + event.duration; d++) {
                 if (!days[d]) days[d] = {};
                 if (event.line == -1 || (days[d][event.line])) {
                     for (let l = 0; l < 500; l++) {

@@ -20,20 +20,20 @@ export default new Vuex.Store({
   },
   getters: {},
   mutations: {
-    selectEventMutation(state, { event, startdaynum, duration }) {
+    selectEventMutation(state, { event, startcellnum, duration }) {
       if (!event) {
         state.highlightedDays.start = 0
         state.highlightedDays.end = 0
         return;
       }
-      let start = new Date(state.fromDate) - 0 + startdaynum * oneDay
+      let start = new Date(state.fromDate) - 0 + startcellnum * oneDay
       state.highlightedDays.start = start
       state.highlightedDays.end =  start + duration * oneDay
     }
   },
   actions: {
-    selectEventAction({ commit }, { event, startdaynum, duration }) {
-      commit("selectEventMutation", { event: event, startdaynum:startdaynum, duration:duration })
+    selectEventAction({ commit }, { event, startcellnum, duration }) {
+      commit("selectEventMutation", { event: event, startcellnum:startcellnum, duration:duration })
     }
   },
   modules: {

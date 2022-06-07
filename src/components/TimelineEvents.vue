@@ -200,7 +200,7 @@ export default {
             key: event._id,
             event: event,
             group: this.timeline.groups[i],
-            startdaynum: Math.ceil(
+            startcellnum: Math.ceil(
               (new Date(event.date_start) - new Date(this.fromDate)) /
                 (1000 * 60 * 60 * 24)
             ),
@@ -209,7 +209,7 @@ export default {
           if (event.period+0) {
             let k = 0;
             while (
-              renderedEvent.startdaynum <
+              renderedEvent.startcellnum <
               Math.min(
                 1000,
                 Math.ceil(
@@ -220,7 +220,7 @@ export default {
             ) {
               k++;
               renderedEvent.key = event._id + "_" + k;
-              renderedEvent.startdaynum += parseInt(event.period);
+              renderedEvent.startcellnum += parseInt(event.period);
               renderedEvents.push(Object.assign({}, renderedEvent));
             }
           }
@@ -264,7 +264,7 @@ export default {
       let style = "";
       style += "background-color:" + displayEvent.group.background + ";";
       style += "color:" + displayEvent.group.foreground + ";";
-      style += "left:" + displayEvent.startdaynum * this.cellWidth + "px;";
+      style += "left:" + displayEvent.startcellnum * this.cellWidth + "px;";
       style += "top:" + displayEvent.event.line * this.lineHeight + "px;";
       style += "width:" + displayEvent.event.duration * this.cellWidth + "px;";
       return style;
@@ -325,7 +325,7 @@ export default {
       this.$store.dispatch("selectEventAction", {
         event: displayEvent.event,
         date_start: displayEvent.event.date_start,
-        startdaynum: displayEvent.startdaynum,
+        startcellnum: displayEvent.startcellnum,
         duration: displayEvent.event.duration
       });
       this.selectedLocalEvent = displayEvent;
@@ -357,15 +357,12 @@ export default {
       Vue.set(event, "duration", duration);
       this.$store.dispatch("selectEventAction", {
         event: this.selectedLocalEvent.event,
-        startdaynum: displayEvent.startdaynum,
+        startcellnum: displayEvent.startcellnum,
         duration: duration
       });
       e.stopPropagation();
     },
     handleEventExpanderDragEnd(e, displayEvent) {
-      /*let event = this.$store.getters["timeline/getEventById"](
-        displayEvent.event._id
-      );*/
       this.$store.dispatch("timeline/updateEventAction", {
         eventId: displayEvent.event._id,
         changes: { duration: displayEvent.event.duration },
@@ -378,7 +375,7 @@ export default {
         event:displayEvent,
         x: e.clientX,
         date_start: displayEvent.event.date_start,
-        startdaynum: displayEvent.startdaynum,
+        startcellnum: displayEvent.startcellnum,
         duration: displayEvent.event.duration
       };
     },
@@ -394,20 +391,17 @@ export default {
         .plus({ days: cellsDiff })
         .toISODate();
       Vue.set(event, "date_start", date_start);
-      displayEvent.startdaynum = this.dragStart.startdaynum + cellsDiff;
+      displayEvent.startcellnum = this.dragStart.startcellnum + cellsDiff;
       if (this.timeline.selectedEventId == displayEvent.event._id) {
         this.$store.dispatch("selectEventAction", {
           event: this.selectedLocalEvent.event,
           date_start: displayEvent.event.date_start,
-          startdaynum: displayEvent.startdaynum,
+          startcellnum: displayEvent.startcellnum,
           duration: displayEvent.event.duration
         });
       }
     },
     handleEventDragEnd(e, displayEvent) {
-      /*let event = this.$store.getters["timeline/getEventById"](
-        displayEvent.event._id
-      );*/
       this.$store.dispatch("timeline/updateEventAction", {
         eventId: displayEvent.event._id,
         changes: { date_start: displayEvent.event.date_start },
