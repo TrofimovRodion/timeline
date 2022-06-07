@@ -188,18 +188,19 @@ export default {
       let groups = [];
       let top = 0;
       for (let i = 0; i < this.timeline.groups.length; i++) {
+        let group = this.timeline.groups[i];
         let displayGroup = {
           top: top,
-          group: this.timeline.groups[i],
+          group: group,
         };
         groups.push(displayGroup);
         let renderedEvents = [];
-        for (let j = 0; j < displayGroup.group.events.length; j++) {
-          let event = displayGroup.group.events[j];
+        for (let j = 0; j < group.events.length; j++) {
+          let event = group.events[j];
           let renderedEvent = {
             key: event._id,
             event: event,
-            group: this.timeline.groups[i],
+            group: group,
             startcellnum: Math.ceil(
               (new Date(event.date_start) - new Date(this.fromDate)) /
                 (1000 * 60 * 60 * 24)
@@ -226,7 +227,7 @@ export default {
           }
         }
         displayGroup.events = renderedEvents;
-        top += displayGroup.group.height;
+        top += group.height;
       }
 
       return {

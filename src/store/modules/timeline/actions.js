@@ -23,7 +23,8 @@ export default {
     async [createEventAction]({ commit }, { groupNum, eventDetails }) {
         let newEvent = Object.assign({
             title: "New event",
-            duration: 5
+            duration: 5,
+            period:0
         }, eventDetails);
         if (groupNum == -1) {
             let newGroup = await timelineApi.createGroup(this.state.timeline.timeline._id, {

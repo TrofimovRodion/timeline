@@ -115,24 +115,7 @@ export default {
               (1000 * 60 * 60 * 24)
           );
           renderedEvents.push(Object.assign({}, event));
-          if (event.period) {
-            let k = 0;
-            while (
-              event.startcellnum <
-              Math.min(
-                1000,
-                Math.ceil(
-                  Math.abs(new Date(this.toDate) - new Date(event.date_start)) /
-                    (1000 * 60 * 60 * 24)
-                )
-              )
-            ) {
-              k++;
-              event.key = event._id + "_" + k;
-              event.startcellnum += parseInt(event.period);
-              renderedEvents.push(Object.assign({}, event));
-            }
-          }
+
         }
         groups[i].events = renderedEvents;
         top += groups[i].height;
