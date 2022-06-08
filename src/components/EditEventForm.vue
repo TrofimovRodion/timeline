@@ -10,6 +10,7 @@
               required
               autofocus
               :value="editEvent.title"
+              ref="ref_editEventTitle"
               @input="handleInputTitle"
             ></v-text-field>
           </v-col>
@@ -154,6 +155,9 @@ export default {
     ...mapState(['timeline'])
   },
   watch: {
+    editEventId: function (newVal) {
+      this.$refs.ref_editEventTitle.focus();
+    },
     display: function (newVal) {
       this.innerDisplay = newVal;
     },
