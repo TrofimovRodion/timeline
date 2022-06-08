@@ -155,7 +155,7 @@ export default {
     ...mapState(['timeline'])
   },
   watch: {
-    editEventId: function (newVal) {
+    editEventId: function () {
       this.$refs.ref_editEventTitle.focus();
     },
     display: function (newVal) {
