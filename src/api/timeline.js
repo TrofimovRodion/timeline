@@ -33,8 +33,8 @@ export default {
         let data = (await axios.post(url + 'timeline/' + timelineId + '/events/' + eventId + '/update', { changes: changes })).data
         return data;
     },
-    async removeEvent(event) {
-        await axios.post(url + 'timeline/' + event.timelineId + '/events/' + event._id + '/remove')
+    async removeEvent(eventId) {
+        await axios.post(url + 'timeline/' + event.timelineId + '/events/' + eventId + '/remove')
     },
     async createGroup(timelineId, details) {
         let data = (await axios.post(url + 'timeline/' + timelineId + '/groups/create', details)).data

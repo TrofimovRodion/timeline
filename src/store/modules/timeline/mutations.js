@@ -87,9 +87,14 @@ export default {
             this.commit('timeline/updateGroupEventsMutation', group)
         }
     },
-    [removeEventMutation](state, { event }) {
+    [removeEventMutation](state, { eventId }) {
+        if (eventId == state.selectedEventId) {
+            state.selectedEventId = null
+            state.selectedEventRepeatNum = null
+        }
+        const event = this.getters['timeline/getEventById'](eventId);
         const group = this.getters['timeline/getGroupById'](event.groupId);
-        group.events = group.events.filter(ev => (ev._id != event._id));
+        group.events = group.events.filter(ev => (ev._id != eventId));
         this.commit('timeline/updateGroupEventsMutation', group)
     },
     [updateEventMutation](state, { eventId, changes }) {

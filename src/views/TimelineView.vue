@@ -100,7 +100,6 @@ export default {
   },
   computed: {
     display: function () {
-
       let groups = [];
       let top = 0;
       for (let i = 0; i < this.timeline.groups.length; i++) {

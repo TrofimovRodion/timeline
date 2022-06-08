@@ -87,7 +87,7 @@
           v-for="displayEvent in displayGroup.events"
           :key="displayEvent.key"
           :class="
-            `event` + (selectedEventKey == displayEvent.key ? ` selected` : ``)
+            `event` + ((timeline.selectedEventId == displayEvent.event._id && timeline.selectedEventRepeatNum == displayEvent.repeatNum) ? ` selected` : ``)
           "
           :style="getEventStyle(displayEvent)"
           @click="selectEvent($event, displayEvent)"
@@ -99,7 +99,7 @@
           <div class="eventContent">
             <div class="eventTitle">{{ displayEvent.event.title }}</div>
             <div
-              v-if="selectedEventKey == displayEvent.key"
+              v-if="timeline.selectedEventId == displayEvent.event._id && timeline.selectedEventRepeatNum == displayEvent.repeatNum"
               class="eventExpander"
               @dragstart="handleEventExpanderDragStart($event, displayEvent)"
               @drag="handleEventExpanderDrag($event, displayEvent)"
@@ -176,14 +176,22 @@ if(/Firefox\/\d+[\d.]*/.test(navigator.userAgent)
 export default {
   data: function () {
     return {
-      selectedEventKey: -1,
       dragStart: {},
       expanderDragStart: {},
       handlerPos: { x: -100, y: -100 },
-      selectedLocalEvent: null,
     };
   },
   computed: {
+    selectedLocalEvent () {
+      for (let g=0;g<this.display.groups.length; g++) {
+        for (let e=0;e<this.display.groups[g].events.length; e++) {
+          if (this.display.groups[g].events[e].event._id == this.timeline.selectedEventId && this.display.groups[g].events[e].repeatNum == this.timeline.selectedEventRepeatNum) {
+            return this.display.groups[g].events[e]
+          }
+        }
+      }
+      return null;
+    },
     display() {
       let groups = [];
       let top = 0;
@@ -199,6 +207,7 @@ export default {
           let event = group.events[j];
           let renderedEvent = {
             key: event._id,
+            repeatNum: 0,
             event: event,
             group: group,
             startcellnum: Math.ceil(
@@ -221,6 +230,7 @@ export default {
             ) {
               k++;
               renderedEvent.key = event._id + "_" + k;
+              renderedEvent.repeatNum = k;
               renderedEvent.startcellnum += parseInt(event.period);
               renderedEvents.push(Object.assign({}, renderedEvent));
             }
@@ -322,20 +332,18 @@ export default {
     },
     selectEvent(e, displayEvent) {
       this.timeline.selectedEventId = displayEvent.event._id;
-      this.selectedEventKey = displayEvent.key;
+      this.timeline.selectedEventRepeatNum = displayEvent.repeatNum;
       this.$store.dispatch("selectEventAction", {
         event: displayEvent.event,
         date_start: displayEvent.event.date_start,
         startcellnum: displayEvent.startcellnum,
         duration: displayEvent.event.duration
       });
-      this.selectedLocalEvent = displayEvent;
       e.stopPropagation();
     },
     deselectEvent() {
-      this.selectedLocalEvent = null;
       this.timeline.selectedEventId = 0;
-      this.selectedEventKey = -1;
+      this.timeline.selectedEventRepeatNum = 0; 
       this.$store.dispatch("selectEventAction", { event: null });
     },
     handleEventExpanderDragStart(e, displayEvent) {

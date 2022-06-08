@@ -38,13 +38,14 @@ export default {
         newEvent = await timelineApi.createEvent(this.state.timeline.timeline._id, group._id, newEvent)
         commit(appendEventMutation, { groupNum: groupNum, eventDetails: newEvent })
     },
-    async [removeEventAction]({ commit }, event) {
-        await timelineApi.removeEvent(event);
-        commit(removeEventMutation, { event: event })
+    async [removeEventAction]({ commit }, eventId) {
+        await timelineApi.removeEvent(eventId);
+        commit(removeEventMutation, { eventId: eventId })
     },
     async [updateEventAction]({ commit }, { eventId, changes }) {
-        let updatedEvent = await timelineApi.updateEvent(this.state.timeline.timeline._id, eventId, changes);
-        commit(updateEventMutation, { eventId: eventId, changes: updatedEvent })
+        commit(updateEventMutation, { eventId: eventId, changes: changes })
+        // this is wrong but let's try to update faster for faster ui feedback
+        await timelineApi.updateEvent(this.state.timeline.timeline._id, eventId, changes);
     },
     async [removeGroupAction]({ commit }, group) {
         await timelineApi.removeGroup(group);
