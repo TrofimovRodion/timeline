@@ -1,5 +1,11 @@
 <style scoped>
 @import "../assets/css.css";
+
+#timelineActions {
+  position: absolute;
+  bottom:20px;
+  left:20px;
+}
 </style>
 
 <template>
@@ -14,11 +20,16 @@
             @close="saveGroupDialog"
           />
 
-          <div id="timeline" class="timeline">
+
+          <div id="timeline" class="timeline" ref="timeline">
             <div class="timelineWrap">
               <TimelineDays></TimelineDays>
               <TimelineEvents></TimelineEvents>
             </div>
+          </div>
+          <div id="timelineActions">
+            <v-btn small @click="setZoom(1)"><v-icon>mdi-plus</v-icon></v-btn>
+            <v-btn small @click="setZoom(7)"><v-icon>mdi-minus</v-icon></v-btn>
           </div>
         </div>
           <div class="panel rightPanel elevation-5" :style="`min-width:`+panelWidth+`px`" ref="rightPanel">
@@ -35,6 +46,7 @@
         </div>
     </v-main>
   </div>
+
 </template>
 
 <script>
@@ -45,6 +57,7 @@ import TimelineDays from "../components/TimelineDays.vue";
 import TimelineEvents from "../components/TimelineEvents.vue";
 import EditEventForm from "../components/EditEventForm.vue";
 import EditTimelineFrom from "../components/EditTimelineForm.vue";
+
 //import _ from 'lodash'
 
 var dragImage = document.createElement('img');
@@ -182,6 +195,11 @@ export default {
     },
     handleSplitterDragEnd() {
       localStorage.setItem('rightPanelWidth', this.panelWidth);
+    },
+    setZoom(zoom) {
+      this.$store.dispatch("setZoom", {
+        zoom: zoom,
+      });
     }
 
   },

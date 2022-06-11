@@ -24,7 +24,8 @@ export default {
         let newEvent = Object.assign({
             title: "New event",
             duration: 5,
-            period:0
+            period:0,
+            date_repeatable_end:null
         }, eventDetails);
         if (groupNum == -1) {
             let newGroup = await timelineApi.createGroup(this.state.timeline.timeline._id, {

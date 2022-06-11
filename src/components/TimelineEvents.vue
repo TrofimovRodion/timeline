@@ -47,6 +47,7 @@
   border-radius: 3px;
   pointer-events: none;
   display:flex;
+  justify-content:center;
   align-items: center;
 }
 .eventContent {
@@ -222,6 +223,11 @@ export default {
               renderedEvent.startcellnum <
               Math.min(
                 1000,
+                event.date_repeatable_end ? 
+                  Math.ceil(
+                    Math.abs(new Date(event.date_repeatable_end) - new Date(event.date_start)) /
+                      (1000 * 60 * 60 * 24)
+                  ): 1000,
                 Math.ceil(
                   Math.abs(new Date(this.toDate) - new Date(event.date_start)) /
                     (1000 * 60 * 60 * 24)
@@ -245,7 +251,7 @@ export default {
       };
     },
     newEventHandlerStyle() {
-      let style = "";
+      let style = "min-width:"+this.cellWidth+"px;";
       if (this.timeline.selectedEventId) {
         style += "display:none;";
       } else {

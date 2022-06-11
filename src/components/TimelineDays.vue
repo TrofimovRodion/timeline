@@ -20,12 +20,12 @@
     text-align:center;
     line-height:25px;
 }
-.days {
+.cells {
     display: flex;
     width:max-content;
     background:#fff;
 }
-.day {
+.cell {
     min-width:24px;
     height:24px;
     margin:0 1px 1px 0;
@@ -35,8 +35,14 @@
     text-align:center;
     line-height:25px;
 }
-.day.highlight {
+.cell.highlight {
   background:#D8E0EF;
+}
+.cell.weekend {
+  background:#FFE8C6;
+}
+.cell.weekend.highlight {
+  background:#F6CC8D;
 }
 </style>
 <template>
@@ -46,9 +52,9 @@
                 {{month.month}}
             </div>
         </div>
-        <div class="days">
-            <div v-for="day in display.days" :key="day.date" :class="`day`+(day.highlight?` highlight`:``)">
-                {{day.day}}
+        <div class="cells">
+            <div v-for="cell in display.cells" :key="cell.date" :class="`cell`+(cell.highlight?` highlight`:``)+(cell.isWeekend?` weekend`:``)" :style="`min-width:`+(cellWidth-1)+`px`">
+                {{cell.title}}
             </div>
         </div>
     </div>
@@ -80,7 +86,7 @@ export default {
       let toDate = new Date(this.toDate);
 
       const diffDays = Math.round(Math.abs((toDate - fromDate) / oneDay)) + 1;
-      let days = [];
+      let cells = [];
       let months = [];
       let curMonth = -1;
       let totalWidth = 0;
@@ -89,9 +95,9 @@ export default {
         if (this.highlightedDays && this.highlightedDays.start <= fromDate && fromDate < this.highlightedDays.end) {
           highlight = true;
         }
-        days.push({
+        cells.push({
           isWeekend: fromDate.getDay() == 0 || fromDate.getDay() == 6,
-          day: fromDate.getDate(),
+          title: fromDate.getDate(),
           date: fromDate.toISOString(),
           highlight: highlight
         });
@@ -112,12 +118,12 @@ export default {
         fromDate.setDate(fromDate.getDate() + 1);
       }
       return {
-        days:days,
+        cells:cells,
         months: months,
-        maxX: this.cellWidth * days.length
+        maxX: this.cellWidth * cells.length
       }
     },
-    ...mapState(["timeline","fromDate", "toDate", "lineHeight", "cellWidth", "highlightedDays"]),
+    ...mapState(["timeline","fromDate", "toDate", "lineHeight", "zoom", "cellWidth", "highlightedDays"]),
   },
 };
 </script>
