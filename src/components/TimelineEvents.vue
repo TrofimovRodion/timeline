@@ -361,23 +361,27 @@ export default {
       };
       e.stopPropagation();
     },
+
     handleEventExpanderDrag:function(e, displayEvent) {
       if (!e.clientX) return;
-      let event = this.$store.getters["timeline/getEventById"](
-        displayEvent.event._id
-      );
-      let cellsDiff = Math.round(
-        (e.clientX - this.expanderDragStart.x) / this.cellWidth
-      );
-      let duration = Math.max(1, this.expanderDragStart.duration + cellsDiff);
-      Vue.set(event, "duration", duration);
-      this.$store.dispatch("selectEventAction", {
-        event: this.selectedLocalEvent.event,
-        startcellnum: displayEvent.startcellnum,
-        duration: duration
-      });
+      this.handleEventExpanderDragThrottle(e,displayEvent);
       e.stopPropagation();
     },
+    handleEventExpanderDragThrottle:_.throttle(function (e,displayEvent) {
+        let event = this.$store.getters["timeline/getEventById"](
+          displayEvent.event._id
+        );
+        let cellsDiff = Math.round(
+          (e.clientX - this.expanderDragStart.x) / this.cellWidth
+        );
+        let duration = Math.max(1, this.expanderDragStart.duration + cellsDiff);
+        event.duration = duration;
+        this.$store.dispatch("selectEventAction", {
+          event: this.selectedLocalEvent.event,
+          startcellnum: displayEvent.startcellnum,
+          duration: duration
+        });
+      },10),
     handleEventExpanderDragEnd(e, displayEvent) {
       this.$store.dispatch("timeline/updateEventAction", {
         eventId: displayEvent.event._id,
