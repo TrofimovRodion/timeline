@@ -28,8 +28,8 @@
             </div>
           </div>
           <div id="timelineActions">
-            <v-btn small @click="setZoom(1)"><v-icon>mdi-plus</v-icon></v-btn>
-            <v-btn small @click="setZoom(7)"><v-icon>mdi-minus</v-icon></v-btn>
+            <v-btn small @click="setScale(1)"><v-icon>mdi-plus</v-icon></v-btn>
+            <v-btn small @click="setScale(7)"><v-icon>mdi-minus</v-icon></v-btn>
           </div>
         </div>
           <div class="panel rightPanel elevation-5" :style="`min-width:`+panelWidth+`px`" ref="rightPanel">
@@ -140,7 +140,7 @@ export default {
     scrollTransform: function () {
       return "translate(" + this.scroll.x + ",0)";
     },
-    ...mapState(["timeline", "fromDate", "toDate"]),
+    ...mapState(["timeline", "fromDate", "toDate", "scale"]),
   },
   methods: {
     handleMouseDown(event) {
@@ -196,9 +196,9 @@ export default {
     handleSplitterDragEnd() {
       localStorage.setItem('rightPanelWidth', this.panelWidth);
     },
-    setZoom(zoom) {
-      this.$store.dispatch("setZoom", {
-        zoom: zoom,
+    setScale(scale) {
+      this.$store.dispatch("setScale", {
+        scale: scale,
       });
     }
 

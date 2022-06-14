@@ -117,6 +117,7 @@
 import Vue from "vue";
 import { mapState } from "vuex";
 import { DateTime } from "luxon";
+import _ from "lodash";
 
 var dragImage = document.createElement("img");
 dragImage.src =
@@ -260,7 +261,7 @@ export default {
       }
       return style;
     },
-    ...mapState(["timeline", "fromDate", "toDate", "lineHeight", "cellWidth"]),
+    ...mapState(["timeline", "fromDate", "toDate", "lineHeight", "cellWidth", "scale"]),
   },
   methods: {
     getGroupStyle(displayGroup) {
@@ -360,7 +361,7 @@ export default {
       };
       e.stopPropagation();
     },
-    handleEventExpanderDrag(e, displayEvent) {
+    handleEventExpanderDrag:function(e, displayEvent) {
       if (!e.clientX) return;
       let event = this.$store.getters["timeline/getEventById"](
         displayEvent.event._id
@@ -394,7 +395,7 @@ export default {
         duration: displayEvent.event.duration
       };
     },
-    handleEventDrag(e, displayEvent) {
+    handleEventDrag:_.throttle(function(e, displayEvent) {
       if (!e.clientX) return;
       let event = this.$store.getters["timeline/getEventById"](
         displayEvent.event._id
@@ -415,7 +416,7 @@ export default {
           duration: displayEvent.event.duration
         });
       }
-    },
+    },10),
     handleEventDragEnd(e, displayEvent) {
       this.$store.dispatch("timeline/updateEventAction", {
         eventId: displayEvent.event._id,

@@ -19,6 +19,8 @@
     font-size:0.8em;
     text-align:center;
     line-height:25px;
+    overflow:hidden;
+    text-overflow: ellipsis;
 }
 .cells {
     display: flex;
@@ -34,6 +36,8 @@
     font-size:0.8em;
     text-align:center;
     line-height:25px;
+    overflow:hidden;
+    text-overflow: ellipsis;
 }
 .cell.highlight {
   background:#D8E0EF;
@@ -48,19 +52,21 @@
 <template>
     <div class="calendar">
         <div class="months">
-            <div v-for="month in display.months" :key="month.date" class="month" :style="`min-width:`+(month.width*cellWidth-1)+`px`">
+            <div v-for="month in display.months" :key="month.date" class="month" :style="`min-width:`+(month.width*cellWidth-1)+`px; width:`+(month.width*cellWidth-1)+`px`">
                 {{month.month}}
             </div>
         </div>
         <div class="cells">
-            <div v-for="cell in display.cells" :key="cell.date" :class="`cell`+(cell.highlight?` highlight`:``)+(cell.isWeekend?` weekend`:``)" :style="`min-width:`+(cellWidth-1)+`px`">
+            <div v-for="cell in display.cells" :key="cell.date" :class="`cell`+(cell.highlight?` highlight`:``)+(cell.isWeekend?` weekend`:``)" :style="`min-width:`+cell.width+`px; width:`+cell.width+`px`">
                 {{cell.title}}
             </div>
         </div>
     </div>
 </template>
 <script>
+import { DateTime } from "luxon";
 import { mapState } from "vuex";
+//import { DateTime } from "luxon";
 
 const c_MonthNames = [
   "January",
@@ -77,45 +83,46 @@ const c_MonthNames = [
   "December",
 ];
 
-const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+//const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
 
 export default {
   computed: {
     display: function () {
-      let fromDate = new Date(this.fromDate);
-      let toDate = new Date(this.toDate);
+      let fromDate = DateTime.fromISO(this.fromDate)
+      let toDate = DateTime.fromISO(this.toDate);
 
-      const diffDays = Math.round(Math.abs((toDate - fromDate) / oneDay)) + 1;
+      const diffDays = toDate.diff(fromDate, 'days').as('days')+1
       let cells = [];
       let months = [];
       let curMonth = -1;
       let totalWidth = 0;
-      for (let i = 0; i < diffDays; i++) {
+      let curDate = fromDate;
+      for (let i = 0; i < diffDays; i+=1) {
         let highlight = false
-        if (this.highlightedDays && this.highlightedDays.start <= fromDate && fromDate < this.highlightedDays.end) {
+        if (this.highlightedDays && this.highlightedDays.start <= curDate.plus({days:7-curDate.weekday}) && curDate < this.highlightedDays.end) {
           highlight = true;
         }
-        cells.push({
-          isWeekend: fromDate.getDay() == 0 || fromDate.getDay() == 6,
-          title: fromDate.getDate(),
-          date: fromDate.toISOString(),
-          highlight: highlight
-        });
-        if (curMonth != fromDate.getMonth()) {
-          curMonth = fromDate.getMonth();
-          let width = new Date(
-            fromDate.getFullYear(),
-            fromDate.getMonth() + 1,
-            0
-          ).getDate();
+        if (this.scale==1 || (i==0||curDate.weekday==1)) {
+          cells.push({
+            isWeekend: curDate.weekday == 6 || curDate.weekday == 7,
+            title: this.scale==1 ? curDate.day : (curDate.day+" - "+(curDate.plus({days:7-curDate.weekday}).day)),
+            date: curDate.toISODate(),
+            highlight: highlight,
+            width:this.cellWidth*(this.scale==7?7-curDate.weekday+1:1)-1
+          });
+        }
+        if (curMonth != curDate.month) {
+          let width = 0;
+          width = (curMonth!=-1 ? curDate.daysInMonth : (DateTime.local(curDate.year,curDate.month,1).plus({month:1}).diff(curDate,'days').as('days')));
+          curMonth = curDate.month;
           months.push({
             width: width,
             left: totalWidth,
-            month: c_MonthNames[curMonth],
+            month: c_MonthNames[curMonth-1],
           });
           totalWidth += width;
         }
-        fromDate.setDate(fromDate.getDate() + 1);
+        curDate = curDate.plus({days:1})
       }
       return {
         cells:cells,
@@ -123,7 +130,7 @@ export default {
         maxX: this.cellWidth * cells.length
       }
     },
-    ...mapState(["timeline","fromDate", "toDate", "lineHeight", "zoom", "cellWidth", "highlightedDays"]),
+    ...mapState(["timeline","fromDate", "toDate", "lineHeight", "scale", "cellWidth", "highlightedDays"]),
   },
 };
 </script>

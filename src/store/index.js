@@ -3,52 +3,44 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import guestModule from './modules/guest'
 import timelineModule from './modules/timeline'
-//import { DateTime } from 'luxon'
+import { DateTime } from 'luxon'
 
 Vue.use(Vuex)
-const oneDay = 24 * 60 * 60 * 1000;
 
 export default new Vuex.Store({
   state: {
     fromDate: "2022-01-01",
     toDate: "2022-12-31",
     lineHeight: 40,
-    zoom: 1,
+    scale: 1,
     cellWidth: 25,
     highlightedDays: {
-      start:0,end:0
+      start:null,end:null
     }
   },
   getters: {},
   mutations: {
     selectEventMutation(state, { event, startcellnum, duration }) {
       if (!event) {
-        state.highlightedDays.start = 0
-        state.highlightedDays.end = 0
+        state.highlightedDays.start = null
+        state.highlightedDays.end = null
         return;
       }
-      let start = new Date(state.fromDate) - 0 + startcellnum * oneDay
+      let start = DateTime.fromISO(state.fromDate).plus({days:startcellnum});
       state.highlightedDays.start = start
-      state.highlightedDays.end =  start + duration * oneDay
+      state.highlightedDays.end =  start.plus({days:duration})
     },
-    updateZoomMutation(state, {zoom}) {
-        //console.log(zoom, state.cellWidth);
-        state.zoom = zoom;
-        switch (zoom) {
-          case 7:
-            state.cellWidth = 60; break
-          case 1:
-          default:
-            state.cellWidth = 25; break
-        }
+    updateScaleMutation(state, {scale}) {
+        state.scale = scale;
+        state.cellWidth = scale==1?25:10;
     }
   },
   actions: {
     selectEventAction({ commit }, { event, startcellnum, duration }) {
       commit("selectEventMutation", { event: event, startcellnum:startcellnum, duration:duration })
     },
-    setZoom({commit}, {zoom}) {
-      commit("updateZoomMutation", {zoom:zoom});
+    setScale({commit}, {scale}) {
+      commit("updateScaleMutation", {scale:scale});
     }
   },
   modules: {
