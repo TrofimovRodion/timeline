@@ -21,7 +21,6 @@ html,body {
 .timeline {
     height:100%;
     width: max-content;
-    overflow:auto;
     position: relative;
     background:#F6F6F6;
 }

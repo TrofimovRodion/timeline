@@ -14,7 +14,7 @@
     <NavigationBar></NavigationBar>
     <v-main style="height:100%">
       <div class="panels" ref="panels">
-        <div class="panel mainPanel" ref="mainPanel">
+        <div class="panel mainPanel" ref="mainPanel" @scroll="handleScroll($event.currentTarget)">
           <EditGroupDialog
             :editGroupId="editGroupId"
             :display="editGroupDialog.display"
@@ -73,8 +73,8 @@ import TimelineDays from "../components/TimelineDays.vue";
 import TimelineEvents from "../components/TimelineEvents.vue";
 import EditEventForm from "../components/EditEventForm.vue";
 import EditTimelineFrom from "../components/EditTimelineForm.vue";
-
-//import _ from 'lodash'
+import {DateTime} from "luxon";
+import _ from "lodash";
 
 var dragImage = document.createElement('img');
 dragImage.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
@@ -98,6 +98,9 @@ export default {
       timelineId: this.$route.params.timelineId,
     });
     this.localCellWidth = this.cellWidth;
+    this.scrollDate = localStorage.getItem('scrollDate-'+this.$route.params.timelineId);
+    if (!this.scrollDate) this.scrollDate = DateTime.now().toISODate();
+    this.scrollToScrollDate()
   },
 
   data() {
@@ -126,7 +129,8 @@ export default {
       dragStartX:0,
       panelWidthDragStart:0,
       panelWidth:300,
-      localCellWidth:25
+      localCellWidth:25,
+      scrollDate:DateTime.now().toISODate(),
     };
   },
   computed: {
@@ -163,12 +167,23 @@ export default {
   watch:{
     cellWidth(newVal) {
       this.localCellWidth=newVal;
+      this.scrollToScrollDate()
     },
     localCellWidth(newVal) {
       this.setCellWidth(newVal)
     }
   },
   methods: {
+    handleScroll:_.debounce(function(currentTarget) {
+      if (!currentTarget) return;
+      let date = DateTime.fromISO(this.fromDate).plus({days:Math.round((currentTarget.scrollLeft + 200) / this.cellWidth)}).toISODate();
+      this.scrollDate = date;
+      localStorage.setItem('scrollDate-'+this.$route.params.timelineId, this.scrollDate);
+    },100),
+    scrollToScrollDate() {
+      let scrollVal = Math.max(0,DateTime.fromISO(this.scrollDate).diff(DateTime.fromISO(this.fromDate),"days").as("days") * this.cellWidth - 200)
+      this.$refs.mainPanel.scrollTo({left:scrollVal})
+    },
     handleMouseDown(event) {
       let dayNum = Math.round((event.offsetX - this.scroll.x - 15) / 25);
       let groupNum = -1;

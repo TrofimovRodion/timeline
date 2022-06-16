@@ -97,7 +97,7 @@ export default {
       let curMonth = -1;
       let totalWidth = 0;
       let curDate = fromDate;
-      let scale = this.cellWidth > 10 ? 1 : 7;
+      let scale = this.cellWidth > 15 ? 1 : 7;
       for (let i = 0; i < diffDays; i+=1) {
         let highlight = false
         if (scale == 1) {

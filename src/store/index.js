@@ -31,7 +31,7 @@ export default new Vuex.Store({
     },
     updateCellWidthMutation(state, {cellWidth}) {
         state.cellWidth = cellWidth;
-    }
+    },
   },
   actions: {
     selectEventAction({ commit }, { event, startcellnum, duration }) {
@@ -39,7 +39,7 @@ export default new Vuex.Store({
     },
     setCellWidth({commit}, {cellWidth}) {
       commit("updateCellWidthMutation", {cellWidth:cellWidth});
-    }
+    },
   },
   modules: {
     guest: guestModule,
