@@ -65,7 +65,9 @@
         </v-btn-toggle>
       </floating-menu>
     </div>
-    <editor-content :editor="editor" />
+    <div>
+      <editor-content :editor="editor" />
+    </div>
   </div>
 </template>
 
