@@ -3,6 +3,7 @@
 
 #timelineActions {
   position: absolute;
+  width:150px;
   bottom:20px;
   left:20px;
 }
@@ -28,8 +29,23 @@
             </div>
           </div>
           <div id="timelineActions">
-            <v-btn small @click="setScale(1)"><v-icon>mdi-plus</v-icon></v-btn>
-            <v-btn small @click="setScale(7)"><v-icon>mdi-minus</v-icon></v-btn>
+            <v-slider min="10" max="25" v-model="localCellWidth">
+            <template v-slot:prepend>
+              <v-icon
+                @click="setCellWidth(cellWidth-1)"
+              >
+                mdi-minus
+              </v-icon>
+            </template>
+
+            <template v-slot:append>
+              <v-icon
+                @click="setCellWidth(cellWidth+1)"
+              >
+                mdi-plus
+              </v-icon>
+            </template>
+            </v-slider>
           </div>
         </div>
           <div class="panel rightPanel elevation-5" :style="`min-width:`+panelWidth+`px`" ref="rightPanel">
@@ -81,6 +97,7 @@ export default {
     this.$store.dispatch("timeline/loadTimelineAction", {
       timelineId: this.$route.params.timelineId,
     });
+    this.localCellWidth = this.cellWidth;
   },
 
   data() {
@@ -108,7 +125,8 @@ export default {
       editGroupId: null,
       dragStartX:0,
       panelWidthDragStart:0,
-      panelWidth:300
+      panelWidth:300,
+      localCellWidth:25
     };
   },
   computed: {
@@ -140,7 +158,15 @@ export default {
     scrollTransform: function () {
       return "translate(" + this.scroll.x + ",0)";
     },
-    ...mapState(["timeline", "fromDate", "toDate", "scale"]),
+    ...mapState(["timeline", "fromDate", "toDate", "cellWidth"]),
+  },
+  watch:{
+    cellWidth(newVal) {
+      this.localCellWidth=newVal;
+    },
+    localCellWidth(newVal) {
+      this.setCellWidth(newVal)
+    }
   },
   methods: {
     handleMouseDown(event) {
@@ -196,9 +222,9 @@ export default {
     handleSplitterDragEnd() {
       localStorage.setItem('rightPanelWidth', this.panelWidth);
     },
-    setScale(scale) {
-      this.$store.dispatch("setScale", {
-        scale: scale,
+    setCellWidth(cellWidth) {
+      this.$store.dispatch("setCellWidth", {
+        cellWidth: cellWidth,
       });
     }
 

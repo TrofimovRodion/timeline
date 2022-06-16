@@ -261,7 +261,7 @@ export default {
       }
       return style;
     },
-    ...mapState(["timeline", "fromDate", "toDate", "lineHeight", "cellWidth", "scale"]),
+    ...mapState(["timeline", "fromDate", "toDate", "lineHeight", "cellWidth"]),
   },
   methods: {
     getGroupStyle(displayGroup) {

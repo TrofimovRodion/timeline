@@ -12,7 +12,6 @@ export default new Vuex.Store({
     fromDate: "2022-01-01",
     toDate: "2022-12-31",
     lineHeight: 40,
-    scale: 1,
     cellWidth: 25,
     highlightedDays: {
       start:null,end:null
@@ -30,17 +29,16 @@ export default new Vuex.Store({
       state.highlightedDays.start = start
       state.highlightedDays.end =  start.plus({days:duration})
     },
-    updateScaleMutation(state, {scale}) {
-        state.scale = scale;
-        state.cellWidth = scale==1?25:10;
+    updateCellWidthMutation(state, {cellWidth}) {
+        state.cellWidth = cellWidth;
     }
   },
   actions: {
     selectEventAction({ commit }, { event, startcellnum, duration }) {
       commit("selectEventMutation", { event: event, startcellnum:startcellnum, duration:duration })
     },
-    setScale({commit}, {scale}) {
-      commit("updateScaleMutation", {scale:scale});
+    setCellWidth({commit}, {cellWidth}) {
+      commit("updateCellWidthMutation", {cellWidth:cellWidth});
     }
   },
   modules: {
