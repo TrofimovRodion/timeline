@@ -61,6 +61,7 @@ text {
     height: 100%;
 }
 .panel.rightPanel {
+    min-width: 300px;
     width:300px;
     position:relative;
     overflow:auto;
@@ -78,4 +79,7 @@ text {
     border-left:1px solid #c0c0c0;
     width:5px;
     cursor:col-resize;
+}
+.panelSplitter:hover {
+    border-left:1px solid #1976d2;
 }

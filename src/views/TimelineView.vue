@@ -191,7 +191,7 @@ export default {
     },
     handleSplitterDrag(e) {
       if (!e.clientX) return;
-      this.panelWidth = this.panelWidthDragStart - e.clientX + this.dragStartX;
+      this.panelWidth = Math.max(300,this.panelWidthDragStart - e.clientX + this.dragStartX);
     },
     handleSplitterDragEnd() {
       localStorage.setItem('rightPanelWidth', this.panelWidth);
