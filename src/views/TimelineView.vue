@@ -237,11 +237,11 @@ export default {
     handleSplitterDragEnd() {
       localStorage.setItem('rightPanelWidth', this.panelWidth);
     },
-    setCellWidth(cellWidth) {
+    setCellWidth:_.throttle(function (cellWidth) {
       this.$store.dispatch("setCellWidth", {
         cellWidth: cellWidth,
       });
-    }
+    },50)
 
   },
 };

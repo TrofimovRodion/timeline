@@ -78,7 +78,7 @@
 
       <v-row dense>
         <v-col>
-          <v-text-field v-model="editEvent.color" :mask="mask" return-masked-value hide-details class="ma-0 pa-0" solo>
+          <v-text-field v-model="customColor" :mask="mask" return-masked-value hide-details class="ma-0 pa-0" solo>
             <template v-slot:append>
               <v-menu v-model="startColorPicker" top nudge-bottom="105" nudge-left="16" :close-on-content-click="false">
                 <template v-slot:activator="{ on }">
@@ -86,7 +86,7 @@
                 </template>
                 <v-card>
                   <v-card-text class="pa-0">
-                    <v-color-picker v-model="color" flat />
+                    <v-color-picker v-model="customColor" flat />
                   </v-card-text>
                 </v-card>
               </v-menu>
@@ -123,9 +123,10 @@ export default {
       innerDisplay: false,
       startDatePicker: false,
       repeatableEndDatePicker: false,
-      color: "#1976D2FF",
-      mask: "!#XXXXXXXX",
+      color: "#1976D2",
+      mask: "!#XXXXXX",
       startColorPicker: false,
+      customColor: null,
       local: {
         repeatable: false,
         forever: true
@@ -138,9 +139,9 @@ export default {
       return event
     },
     swatchStyle() {
-      const { color, startColorPicker } = this;
+      const { customColor, startColorPicker } = this;
       return {
-        backgroundColor: color,
+        backgroundColor: customColor,
         cursor: "pointer",
         height: "30px",
         width: "30px",
@@ -153,12 +154,26 @@ export default {
   watch: {
     editEventId: function () {
       this.$refs.ref_editEventTitle.focus();
+      if (this.editEvent) {
+        let group = this.$store.getters["timeline/getGroupById"](this.editEvent.groupId);
+        this.customColor = this.editEvent.color?this.editEvent.color:group.background
+      }
     },
     ["editEvent.period"]: function () {
       this.local.repeatable = parseInt(this.editEvent.period) > 0 ? true : false;
     },
     ["editEvent.date_repeatable_end"]: function () {
       this.local.forever = this.editEvent.date_repeatable_end ? false : true;
+    },
+    customColor: function (newVal) {
+      if (!this.editEvent) return;
+      if (this.editEvent.color!= newVal) {
+        this.editEvent.color = newVal;
+        this.$store.dispatch("timeline/updateEventAction", {
+          eventId: this.editEventId,
+          changes: { color: newVal }
+        })
+      }
     },
     display: function (newVal) {
       this.innerDisplay = newVal;
@@ -172,6 +187,11 @@ export default {
     this.repeatableEndDatePicker = false
     this.local.repeatable = parseInt(this.editEvent.period) > 0 ? true : false;
     this.local.forever = this.editEvent.date_repeatable_end ? false : true;
+    this.customColor = null
+    if (this.editEvent) {
+      let group = this.$store.getters["timeline/getGroupById"](this.editEvent.groupId);
+      this.customColor = this.editEvent.color?this.editEvent.color:group.background
+    }
   },
   methods: {
     remove() {

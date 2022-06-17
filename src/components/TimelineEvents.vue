@@ -26,8 +26,13 @@
   mix-blend-mode: multiply;
   box-shadow: 0px 1px 4px #00000055;
 }
+.event:hover {
+  margin-top:-2px;
+  box-shadow: 0px 3px 7px #00000055;
+}
 .event.selected {
   border: 1px solid #fff;
+  outline: 1px solid #fff;
   box-shadow: 0px 2px 5px #00000088;
 }
 .eventTitle {
@@ -114,7 +119,7 @@
   </div>
 </template>
 <script>
-import Vue from "vue";
+//import Vue from "vue";
 import { mapState } from "vuex";
 import { DateTime } from "luxon";
 import _ from "lodash";
@@ -212,6 +217,8 @@ export default {
             repeatNum: 0,
             event: event,
             group: group,
+            displayGroup:displayGroup,
+            line:event.line,
             startcellnum: Math.ceil(
               (new Date(event.date_start) - new Date(this.fromDate)) /
                 (1000 * 60 * 60 * 24)
@@ -280,32 +287,26 @@ export default {
     },
     getEventStyle(displayEvent) {
       let style = "";
-      style += "background-color:" + displayEvent.group.background + ";";
+      style += "background-color:" + (displayEvent.event.color!=undefined ? displayEvent.event.color: displayEvent.group.background) + ";";
       style += "color:" + displayEvent.group.foreground + ";";
       style += "left:" + displayEvent.startcellnum * this.cellWidth + "px;";
-      style += "top:" + displayEvent.event.line * this.lineHeight + "px;";
+      style += "top:" + displayEvent.line * this.lineHeight + "px;";
       style += "width:" + displayEvent.event.duration * this.cellWidth + "px;";
       return style;
     },
     handleMouseMove(e) {
       if (e.target.className != "group" && e.target.className != "groups") {
-        this.handlerPos = {
-          x: -100,
-          y: -100,
-        };
+        this.handlerPos.x = -100
+        this.handlerPos.y = -100
         return;
       }
       let rect = e.currentTarget.getBoundingClientRect();
-      this.handlerPos = {
-        x:
-          Math.round(
+      this.handlerPos.x = Math.round(
             (e.screenX - rect.left - this.cellWidth / 2) / this.cellWidth
-          ) * this.cellWidth,
-        y:
-          Math.round(
+          ) * this.cellWidth;
+      this.handlerPos.y = Math.round(
             (e.clientY - rect.top - this.lineHeight / 2) / this.lineHeight
-          ) * this.lineHeight,
-      };
+          ) * this.lineHeight;
     },
     handleClickCanvas(e) {
       if (this.timeline.selectedEventId) {
@@ -375,12 +376,14 @@ export default {
           (e.clientX - this.expanderDragStart.x) / this.cellWidth
         );
         let duration = Math.max(1, this.expanderDragStart.duration + cellsDiff);
-        event.duration = duration;
-        this.$store.dispatch("selectEventAction", {
-          event: this.selectedLocalEvent.event,
-          startcellnum: displayEvent.startcellnum,
-          duration: duration
-        });
+        if(event.duration!=duration) {
+          event.duration = duration;
+          this.$store.dispatch("selectEventAction", {
+            event: this.selectedLocalEvent.event,
+            startcellnum: displayEvent.startcellnum,
+            duration: duration
+          });
+        }
       },10),
     handleEventExpanderDragEnd(e, displayEvent) {
       this.$store.dispatch("timeline/updateEventAction", {
@@ -394,7 +397,9 @@ export default {
       this.dragStart = {
         event:displayEvent,
         x: e.clientX,
+        y: e.clientY,
         date_start: displayEvent.event.date_start,
+        line: displayEvent.line,
         startcellnum: displayEvent.startcellnum,
         duration: displayEvent.event.duration
       };
@@ -407,24 +412,45 @@ export default {
       let cellsDiff = Math.round(
         (e.clientX - this.dragStart.x) / this.cellWidth
       );
+      let linesDiff = Math.round(
+        (e.clientY - this.dragStart.y) / this.lineHeight
+      );
       let date_start = DateTime.fromISO(this.dragStart.date_start)
         .plus({ days: cellsDiff })
         .toISODate();
-      Vue.set(event, "date_start", date_start);
-      displayEvent.startcellnum = this.dragStart.startcellnum + cellsDiff;
-      if (this.timeline.selectedEventId == displayEvent.event._id) {
-        this.$store.dispatch("selectEventAction", {
-          event: this.selectedLocalEvent.event,
-          date_start: displayEvent.event.date_start,
-          startcellnum: displayEvent.startcellnum,
-          duration: displayEvent.event.duration
-        });
+      let line = this.dragStart.line + linesDiff;
+      let startcellnum = this.dragStart.startcellnum + cellsDiff
+      if(line!=event.line) {
+        for (let i in displayEvent.displayGroup.events) {
+          if (displayEvent.displayGroup.events[i].event._id == event._id) {
+            displayEvent.displayGroup.events[i].line = line
+          }
+        }
+        displayEvent.line = line
+        event.line = line;
+        this.$forceUpdate();
+      }
+      if (startcellnum!=displayEvent.startcellnum) {
+        event.date_start = date_start;
+        displayEvent.startcellnum = this.dragStart.startcellnum + cellsDiff;
+        this.$forceUpdate();
+        if (this.timeline.selectedEventId == displayEvent.event._id) {
+          this.$store.dispatch("selectEventAction", {
+            event: this.selectedLocalEvent.event,
+            date_start: displayEvent.event.date_start,
+            startcellnum: displayEvent.startcellnum,
+            duration: displayEvent.event.duration
+          });
+        }
       }
     },10),
     handleEventDragEnd(e, displayEvent) {
       this.$store.dispatch("timeline/updateEventAction", {
         eventId: displayEvent.event._id,
-        changes: { date_start: displayEvent.event.date_start },
+        changes: {
+          date_start: displayEvent.event.date_start,
+          line: displayEvent.event.line
+        },
       });
     },
   },

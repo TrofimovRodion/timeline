@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon'
+//import { DateTime } from 'luxon'
 import { setCurrentTimelineMutation,updateTimelineMutation, setGroupsMutation, appendGroupMutation, appendEventMutation, updateEventMutation, removeEventMutation, updateGroupEventsMutation, removeGroupMutation, updateGroupMutation } from './types.js'
 import { getContrastColor } from '../../../utils/index'
 
@@ -42,7 +42,7 @@ export default {
         }
     },
     [updateGroupEventsMutation](state, group) {
-        let days = {};
+        /*let days = {};
         let sortedEvents = [...group.events].sort((a, b) => {
             return DateTime.fromISO(a.date_start) > DateTime.fromISO(b.date_start) ? 1 : ((DateTime.fromISO(a.date_start) < DateTime.fromISO(b.date_start)) ? -1 : 0)
         })
@@ -64,6 +64,11 @@ export default {
                     days[d][event.line] = event;
                 }
             }
+        }*/
+        for (let e in group.events) {
+            if (!group.events[e].line) {
+                group.events[e].line = 0
+            }
         }
         let top = 0;
         for (let g = 0; g < state.groups.length; g++) {
@@ -75,6 +80,7 @@ export default {
                 gr.height = Math.max(gr.height, event.line + 1)
             }
             top += gr.height;
+            gr.height = 15;
         }
     },
     [appendEventMutation](state, { groupNum, eventDetails, skipUpdate }) {
