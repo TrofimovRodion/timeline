@@ -34,6 +34,7 @@
   border: 1px solid #fff;
   outline: 1px solid #fff;
   box-shadow: 0px 2px 5px #00000088;
+  z-index:1;
 }
 .eventTitle {
   text-overflow: ellipsis;
@@ -122,6 +123,8 @@
 //import Vue from "vue";
 import { mapState } from "vuex";
 import { DateTime } from "luxon";
+import { getContrastColor } from '../utils/index'
+
 import _ from "lodash";
 
 var dragImage = document.createElement("img");
@@ -281,14 +284,15 @@ export default {
           this.timeline.selectedEventId
         ).groupId == displayGroup.group._id
       ) {
-        style += "background:#00000011;";
+        style += "background:#00000008;";
       }
       return style;
     },
     getEventStyle(displayEvent) {
       let style = "";
-      style += "background-color:" + (displayEvent.event.color!=undefined ? displayEvent.event.color: displayEvent.group.background) + ";";
-      style += "color:" + displayEvent.group.foreground + ";";
+      let color = (displayEvent.event.color!=undefined ? displayEvent.event.color: displayEvent.group.background);
+      style += "background-color:" + color + ";";
+      style += "color:" + getContrastColor(color) + ";";
       style += "left:" + displayEvent.startcellnum * this.cellWidth + "px;";
       style += "top:" + displayEvent.line * this.lineHeight + "px;";
       style += "width:" + displayEvent.event.duration * this.cellWidth + "px;";
