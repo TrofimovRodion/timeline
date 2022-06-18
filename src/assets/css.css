@@ -12,15 +12,10 @@ html,body {
     height:100%;
 }
   
-.timelineWrap {
-    display:flex;
-    flex-direction:column;
-    align-items:stretch;
-    height:100%;
-}
 .timeline {
+    overflow:scroll;
+    width:100%;
     height:100%;
-    width: max-content;
     position: relative;
     background:#F6F6F6;
 }

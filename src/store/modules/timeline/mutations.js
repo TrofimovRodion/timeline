@@ -80,7 +80,7 @@ export default {
                 gr.height = Math.max(gr.height, event.line + 1)
             }
             top += gr.height;
-            gr.height = 15;
+            gr.height = 25;
         }
     },
     [appendEventMutation](state, { groupNum, eventDetails, skipUpdate }) {

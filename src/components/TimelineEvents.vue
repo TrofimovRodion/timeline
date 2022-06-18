@@ -11,6 +11,10 @@
   width: 100%;
   overflow: hidden;
 }
+.groupTitle {
+  position:sticky;
+  left:0px;
+}
 .groupEvents {
   position: relative;
   margin: 5px 0;
@@ -79,6 +83,7 @@
     @click="handleClickCanvas($event)"
     @mousemove="handleMouseMove($event)"
     @mouseout="handlerPos = { x: -100, y: -100 }"
+    :style="{height:display.height*lineHeight+'px'}"
   >
     <div class="newEventHandler" :style="newEventHandlerStyle">
       <v-icon>mdi-plus</v-icon>
@@ -256,9 +261,9 @@ export default {
         displayGroup.events = renderedEvents;
         top += group.height;
       }
-
       return {
         groups: groups,
+        height: top
       };
     },
     newEventHandlerStyle() {
@@ -277,7 +282,7 @@ export default {
     getGroupStyle(displayGroup) {
       let style = "";
       style += "top:" + displayGroup.top * this.lineHeight + "px;";
-      style += "height:" + displayGroup.group.height * this.lineHeight + "px;";
+      style += "min-height:" + displayGroup.group.height * this.lineHeight + "px;";
       if (
         this.timeline.selectedEventId &&
         this.$store.getters["timeline/getEventById"](

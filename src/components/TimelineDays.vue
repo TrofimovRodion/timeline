@@ -1,10 +1,4 @@
 <style scoped>
-.calendar {
-  position: sticky;
-  top:0px;
-  z-index: 1;
-  width: max-content;
-}
 .months {
     display: flex;
     width:max-content;
@@ -47,6 +41,11 @@
 }
 .cell.weekend.highlight {
   background:#F6CC8D;
+}
+.calendar {
+  width:max-content;
+  background:#fff;
+  box-shadow:0px 2px 5px #00000055
 }
 </style>
 <template>
