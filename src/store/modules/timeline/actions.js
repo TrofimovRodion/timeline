@@ -25,11 +25,13 @@ export default {
             title: "New event",
             duration: 5,
             period:0,
-            date_repeatable_end:null
+            date_repeatable_end:null,
+            color:0
         }, eventDetails);
         if (groupNum == -1) {
             let newGroup = await timelineApi.createGroup(this.state.timeline.timeline._id, {
                 title: newEvent.title,
+                lines:1,
                 background: '#2c8ff4'
             })
             commit(appendGroupMutation, { group: newGroup })

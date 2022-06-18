@@ -83,7 +83,6 @@
     @click="handleClickCanvas($event)"
     @mousemove="handleMouseMove($event)"
     @mouseout="handlerPos = { x: -100, y: -100 }"
-    :style="{height:display.height*lineHeight+'px'}"
   >
     <div class="newEventHandler" :style="newEventHandlerStyle">
       <v-icon>mdi-plus</v-icon>
@@ -259,7 +258,7 @@ export default {
           }
         }
         displayGroup.events = renderedEvents;
-        top += group.height;
+        top += group.lines;
       }
       return {
         groups: groups,
@@ -282,7 +281,7 @@ export default {
     getGroupStyle(displayGroup) {
       let style = "";
       style += "top:" + displayGroup.top * this.lineHeight + "px;";
-      style += "min-height:" + displayGroup.group.height * this.lineHeight + "px;";
+      style += "min-height:" + displayGroup.group.lines * this.lineHeight + "px;";
       if (
         this.timeline.selectedEventId &&
         this.$store.getters["timeline/getEventById"](
@@ -295,7 +294,7 @@ export default {
     },
     getEventStyle(displayEvent) {
       let style = "";
-      let color = (displayEvent.event.color!=undefined ? displayEvent.event.color: displayEvent.group.background);
+      let color = (displayEvent.event.color ? displayEvent.event.color: displayEvent.group.background);
       style += "background-color:" + color + ";";
       style += "color:" + getContrastColor(color) + ";";
       style += "left:" + displayEvent.startcellnum * this.cellWidth + "px;";
@@ -304,7 +303,7 @@ export default {
       return style;
     },
     handleMouseMove(e) {
-      if (e.target.className != "group" && e.target.className != "groups") {
+      if (e.target.className != "group" && e.target.className.indexOf('groups') == -1) {
         this.handlerPos.x = -100
         this.handlerPos.y = -100
         return;
@@ -331,7 +330,7 @@ export default {
         );
         let h = 0;
         for (let i = 0; i < this.timeline.groups.length; i++) {
-          h += this.timeline.groups[i].height;
+          h += this.timeline.groups[i].lines;
           if (line < h) {
             groupNum = i;
             break;

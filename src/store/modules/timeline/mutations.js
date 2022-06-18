@@ -20,13 +20,13 @@ export default {
         }
     },
     [appendGroupMutation](state, { group, skipUpdate }) {
-        let top = (state.groups.length == 0) ? 0 : (state.groups[state.groups.length - 1].top + state.groups[state.groups.length - 1].height);
+        let top = (state.groups.length == 0) ? 0 : (state.groups[state.groups.length - 1].top + state.groups[state.groups.length - 1].lines);
         let backgroundColor = (group.background)?group.background:"#2c8ff4";
 
         state.groups.push({
             _id: group._id,
             title: group.title,
-            height: 1,
+            lines: group.lines,
             top: top,
             timeline: state.timeline,
             background: backgroundColor,
@@ -73,14 +73,14 @@ export default {
         let top = 0;
         for (let g = 0; g < state.groups.length; g++) {
             let gr = state.groups[g]
-            gr.height = 1;
+            let grLines = 1;
             gr.top = top;
             for (let e in gr.events) {
                 let event = gr.events[e]
-                gr.height = Math.max(gr.height, event.line + 1)
+                grLines = Math.max(grLines, event.line + 1)
             }
-            top += gr.height;
-            gr.height = 25;
+            if (gr.lines < grLines) gr.lines = grLines
+            top += gr.lines;
         }
     },
     [appendEventMutation](state, { groupNum, eventDetails, skipUpdate }) {

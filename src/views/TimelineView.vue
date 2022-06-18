@@ -21,7 +21,6 @@
   height:500px;
   top:50px;
   position:absolute;
-  box-shadow:0px 2px 5px #00000055
 }
 
 .groupTitle {
@@ -56,6 +55,7 @@
             <div class='timelineGroups'>
               <div class="groupTitlesWrap" :style="{height:display.height}">
                 <div class="groupTitle">Title</div>
+                <v-btn outlined>New group</v-btn>
               </div>
             </div>
             <TimelineDays class="timelineCalendar"></TimelineDays>
@@ -175,12 +175,12 @@ export default {
 
         }
         groups[i].events = renderedEvents;
-        top += groups[i].height;
+        top += groups[i].lines;
       }
       let width = this.cellWidth * DateTime.fromISO(this.toDate).diff(DateTime.fromISO(this.fromDate),'days').as('days');
       return {
         groups: groups,
-        height:top*this.lineHeight+'px',
+        height:Math.max(300,top*this.lineHeight)+'px',
         width:width+'px'
       };
     },
@@ -215,7 +215,7 @@ export default {
       let line = Math.round((event.offsetY - 15) / 25);
       let h = 0;
       for (let i = 0; i < this.timeline.groups.length; i++) {
-        h += this.timeline.groups[i].height;
+        h += this.timeline.groups[i].lines;
         if (line < h) {
           groupNum = i;
           break;
