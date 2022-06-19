@@ -15,14 +15,20 @@
 }
 
 .groupTitlesWrap {
-  mask-image: linear-gradient(to right, #fff 30%, #ffffff00);
-  background: linear-gradient(to right, #ffffffaa, #ffffff00);
-  backdrop-filter: blur(15px);
+  background: linear-gradient(to right, #fffffff9 30%, #ffffff00);
   width: 200px;
   padding: 5px;
   height:500px;
   top:50px;
   position:absolute;
+}
+
+@supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+  .groupTitlesWrap {
+    mask-image: linear-gradient(to right, #fff 30%, #ffffff00);
+    background: linear-gradient(to right, #ffffffaa, #ffffff00);
+    backdrop-filter: blur(15px);
+  }
 }
 
 .groupTitle {
