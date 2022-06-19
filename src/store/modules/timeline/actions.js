@@ -1,5 +1,6 @@
 import { loadTimelineAction, createGroupAction, createEventAction, updateEventAction, setCurrentTimelineMutation, appendGroupMutation, appendEventMutation, updateEventMutation, removeEventAction, removeEventMutation, removeGroupAction, updateGroupAction, removeGroupMutation, updateGroupMutation, updateTimelineAction, removeTimelineAction, updateTimelineMutation } from './types.js'
 import timelineApi from '@/api/timeline'
+import changeHue from '../../../utils/index'
 
 export default {
     async [loadTimelineAction]({ commit }, { timelineId }) {
@@ -15,10 +16,15 @@ export default {
         alert(111)
         //commit(setCurrentTimelineMutation, data);
     },
-    async [createGroupAction]({ commit }, group) {
-        setTimeout(() => {
-            commit(appendGroupMutation, group)
-        }, 200)
+    async [createGroupAction]({ commit }, groupDetails) {
+        let group = Object.assign({
+            title:"New group",
+            lines:1,
+            background: changeHue('#2c8ff4', Math.round(Math.random()*360))
+        }, groupDetails)
+
+        let newGroup = await timelineApi.createGroup(this.state.timeline.timeline._id, group)
+        commit(appendGroupMutation, { group: newGroup })
     },
     async [createEventAction]({ commit }, { groupNum, eventDetails }) {
         let newEvent = Object.assign({
@@ -26,6 +32,7 @@ export default {
             duration: 5,
             period:0,
             date_repeatable_end:null,
+            line:null,
             color:0
         }, eventDetails);
         if (groupNum == -1) {

@@ -35,10 +35,9 @@
   box-shadow: 0px 3px 7px #00000055;
 }
 .event.selected {
-  border: 1px solid #fff;
-  outline: 1px solid #fff;
+  border: 1px solid #00000055;
+  outline: 2px solid #fffffff0;
   box-shadow: 0px 2px 5px #00000088;
-  z-index:1;
 }
 .eventTitle {
   text-overflow: ellipsis;
@@ -322,26 +321,30 @@ export default {
       } else {
         let rect = e.currentTarget.getBoundingClientRect();
         let dayNum = Math.round(
-          (e.screenX - rect.left - this.cellWidth / 2) / this.cellWidth
+          (e.clientX - rect.left - this.cellWidth / 2) / this.cellWidth
         );
         let groupNum = this.timeline.groups.length - 1;
         let line = Math.round(
-          (e.screenY - rect.top - this.lineHeight / 2) / this.lineHeight
+          (e.clientY - rect.top - this.lineHeight / 2) / this.lineHeight
         );
         let h = 0;
+        let group = null
         for (let i = 0; i < this.timeline.groups.length; i++) {
           h += this.timeline.groups[i].lines;
           if (line < h) {
             groupNum = i;
+            group = this.timeline.groups[i];
             break;
           }
         }
+        console.log(line,group);
         let startDate = new Date(this.fromDate);
         startDate.setDate(startDate.getDate() + dayNum);
         this.$store.dispatch("timeline/createEventAction", {
           groupNum: groupNum,
           eventDetails: {
             date_start: startDate.toISOString().slice(0, 10),
+            line:line-group.top
           },
         });
       }
@@ -426,7 +429,7 @@ export default {
       let date_start = DateTime.fromISO(this.dragStart.date_start)
         .plus({ days: cellsDiff })
         .toISODate();
-      let line = this.dragStart.line + linesDiff;
+      let line = Math.max(0,this.dragStart.line + linesDiff);
       let startcellnum = this.dragStart.startcellnum + cellsDiff
       if(line!=event.line) {
         for (let i in displayEvent.displayGroup.events) {
@@ -434,6 +437,9 @@ export default {
             displayEvent.displayGroup.events[i].line = line
           }
         }
+        if (line > displayEvent.displayGroup.group.lines-1) {
+          displayEvent.displayGroup.group.lines++;
+        } 
         displayEvent.line = line
         event.line = line;
         this.$forceUpdate();

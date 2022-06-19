@@ -15,7 +15,7 @@
 }
 
 .groupTitlesWrap {
-  background-color: rgb(255, 255, 255);
+  background: linear-gradient(to right, #fff 30%, #ffffff00);
   width: 200px;
   padding: 5px;
   height:500px;
@@ -24,7 +24,9 @@
 }
 
 .groupTitle {
-  position: absolute;
+  position:initial;
+  padding:4px 8px;
+  border-radius:4px;
 }
 
 .timelineEvents {
@@ -54,8 +56,9 @@
             <TimelineEvents class='timelineEvents' :style="{width:display.width, height:display.height}"></TimelineEvents>
             <div class='timelineGroups'>
               <div class="groupTitlesWrap" :style="{height:display.height}">
-                <div class="groupTitle">Title</div>
-                <v-btn outlined>New group</v-btn>
+                <div class="groupTitle" v-for="group in display.groups" :key="group.key"
+                  :style="{height:group.lines*lineHeight+'px',color:group.background,borderLeft:'4px solid '+group.background}">{{group.title}}</div>
+                <v-btn outlined @click="createGroup({title:'New group'})">New group</v-btn>
               </div>
             </div>
             <TimelineDays class="timelineCalendar"></TimelineDays>
