@@ -236,16 +236,10 @@ export default {
             while (
               renderedEvent.startcellnum <
               Math.min(
-                1000,
+                10000,
                 event.date_repeatable_end ? 
-                  Math.ceil(
-                    Math.abs(new Date(event.date_repeatable_end) - new Date(event.date_start)) /
-                      (1000 * 60 * 60 * 24)
-                  ): 1000,
-                Math.ceil(
-                  Math.abs(new Date(this.toDate) - new Date(event.date_start)) /
-                    (1000 * 60 * 60 * 24)
-                )
+                DateTime.fromISO(event.date_repeatable_end).diff(DateTime.fromISO(this.fromDate)).as('days'):10000,
+                DateTime.fromISO(this.toDate).diff(DateTime.fromISO(this.fromDate)).as('days')
               )
             ) {
               k++;
@@ -298,7 +292,7 @@ export default {
       style += "color:" + getContrastColor(color) + ";";
       style += "left:" + displayEvent.startcellnum * this.cellWidth + "px;";
       style += "top:" + displayEvent.line * this.lineHeight + "px;";
-      style += "width:" + displayEvent.event.duration * this.cellWidth + "px;";
+      style += "width:" + (displayEvent.event.duration * this.cellWidth-1) + "px;";
       return style;
     },
     handleMouseMove(e) {
@@ -337,7 +331,6 @@ export default {
             break;
           }
         }
-        console.log(line,group);
         let startDate = new Date(this.fromDate);
         startDate.setDate(startDate.getDate() + dayNum);
         this.$store.dispatch("timeline/createEventAction", {

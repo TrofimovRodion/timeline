@@ -29,6 +29,11 @@
   border-radius:4px;
 }
 
+.newGroup {
+  height:250px;
+  padding: 4px 8px;
+}
+
 .timelineEvents {
   position:absolute;
   top:50px;
@@ -58,7 +63,12 @@
               <div class="groupTitlesWrap" :style="{height:display.height}">
                 <div class="groupTitle" v-for="group in display.groups" :key="group.key"
                   :style="{height:group.lines*lineHeight+'px',color:group.background,borderLeft:'4px solid '+group.background}">{{group.title}}</div>
-                <v-btn outlined @click="createGroup({title:'New group'})">New group</v-btn>
+                <div class="newGroup">
+                  <v-btn depressed small outlined @click="createGroup({title:'New group'})">
+                  <v-icon left>mdi-plus</v-icon>
+                    New group
+                  </v-btn>
+                </div>
               </div>
             </div>
             <TimelineDays class="timelineCalendar"></TimelineDays>
@@ -180,7 +190,7 @@ export default {
         groups[i].events = renderedEvents;
         top += groups[i].lines;
       }
-      let width = this.cellWidth * DateTime.fromISO(this.toDate).diff(DateTime.fromISO(this.fromDate),'days').as('days');
+      let width = this.cellWidth * (DateTime.fromISO(this.toDate).diff(DateTime.fromISO(this.fromDate),'days').as('days')+1);
       return {
         groups: groups,
         height:Math.max(300,top*this.lineHeight)+'px',

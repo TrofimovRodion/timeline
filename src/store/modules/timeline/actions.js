@@ -1,6 +1,6 @@
 import { loadTimelineAction, createGroupAction, createEventAction, updateEventAction, setCurrentTimelineMutation, appendGroupMutation, appendEventMutation, updateEventMutation, removeEventAction, removeEventMutation, removeGroupAction, updateGroupAction, removeGroupMutation, updateGroupMutation, updateTimelineAction, removeTimelineAction, updateTimelineMutation } from './types.js'
 import timelineApi from '@/api/timeline'
-import changeHue from '../../../utils/index'
+import { changeHue } from '../../../utils/index'
 
 export default {
     async [loadTimelineAction]({ commit }, { timelineId }) {
