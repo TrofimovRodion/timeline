@@ -15,7 +15,9 @@
 }
 
 .groupTitlesWrap {
-  background: linear-gradient(to right, #fff 30%, #ffffff00);
+  mask-image: linear-gradient(to right, #fff 30%, #ffffff00);
+  background: linear-gradient(to right, #ffffffaa, #ffffff00);
+  backdrop-filter: blur(15px);
   width: 200px;
   padding: 5px;
   height:500px;
