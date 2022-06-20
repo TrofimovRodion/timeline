@@ -23,11 +23,18 @@
   pointer-events:none;
 }
 
+.groupHeader.selected .groupHeaderBackground{
+  background: linear-gradient(to right, #f9f9f9f9 50%, #f9f9f900);
+}
+
 @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
   .groupHeaderBackground {
     mask-image: linear-gradient(to right, #fff 30%, #ffffff00);
     background: linear-gradient(to right, #ffffffaa, #ffffff00);
     backdrop-filter: blur(5px);
+  }
+  .groupHeader.selected .groupHeaderBackground{
+    background: linear-gradient(to right, #f9f9f9cc 50%, #f9f9f900);
   }
 }
 
@@ -47,11 +54,14 @@
   font-size:0.8em;
   font-weight: bold;
 }
+.groupHeader.selected .groupHeaderTitleWrap {
+  border-left-width: 1px!important;;
+}
 .groupHeaderTitle {
   pointer-events: auto;
   cursor:pointer;
 }
-.groupHeaderTitle:hover {
+.groupHeader.selected .groupHeaderTitle, .groupHeaderTitle:hover {
   text-decoration: underline;
 }
 
@@ -84,15 +94,15 @@
             <TimelineEvents class='timelineEvents' :style="{width:display.width, height:display.height}"></TimelineEvents>
             <div class='timelineGroups'>
               <div class="groupHeadersWrap" :style="{height:display.height}">
-                <div class="groupHeader" v-for="group in display.groups" :key="group.key"
+                <div v-for="group in display.groups" :key="group.key"
                   :style="{height:(group.lines*lineHeight)+'px'}"
+                  :class="{'groupHeader':true,'selected':timeline.selectedGroupId==group._id}"
                   >
                     <div class="groupHeaderBackground"
                       :style="{height:(group.lines*lineHeight-1)+'px'}"></div>
                     <div class="groupHeaderTitleWrap"
                       :style="{color:group.background,borderLeft:'4px solid '+group.background}">
                       <div class="groupHeaderTitle"
-                        :style="{textDecoration:timeline.selectedGroupId==group._id?'underline':''}"
                         @click="selectGroup($event, group)"
                       >{{group.title}}</div>
                     </div>
