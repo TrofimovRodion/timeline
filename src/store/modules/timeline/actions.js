@@ -49,7 +49,7 @@ export default {
         commit(appendEventMutation, { groupNum: groupNum, eventDetails: newEvent })
     },
     async [removeEventAction]({ commit }, eventId) {
-        await timelineApi.removeEvent(eventId);
+        await timelineApi.removeEvent(this.state.timeline.timeline._id, eventId);
         commit(removeEventMutation, { eventId: eventId })
     },
     async [updateEventAction]({ commit }, { eventId, changes }) {
@@ -57,12 +57,12 @@ export default {
         // this is wrong but let's try to update faster for faster ui feedback
         await timelineApi.updateEvent(this.state.timeline.timeline._id, eventId, changes);
     },
-    async [removeGroupAction]({ commit }, group) {
-        await timelineApi.removeGroup(group);
-        commit(removeGroupMutation, { group: group })
+    async [removeGroupAction]({ commit }, groupId) {
+        await timelineApi.removeGroup(this.state.timeline.timeline._id, groupId);
+        commit(removeGroupMutation, { groupId: groupId })
     },
-    async [updateGroupAction]({ commit }, { group, changes }) {
-        let updatedGroup = await timelineApi.updateGroup(group, changes);
-        commit(updateGroupMutation, { group: group, changes: updatedGroup })
+    async [updateGroupAction]({ commit }, { groupId, changes }) {
+        let updatedGroup = await timelineApi.updateGroup(groupId, changes);
+        commit(updateGroupMutation, { groupId: groupId, changes: updatedGroup })
     }
 }

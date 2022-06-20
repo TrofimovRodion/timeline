@@ -88,20 +88,20 @@ export default {
   },
   methods: {
     remove() {
-      this.$store.dispatch("timeline/removeGroupAction", this.editGroup);
+      this.$store.dispatch("timeline/removeGroupAction", this.editGroupId);
     },
     close() {
       this.$emit("close");
     },
     handleInputTitle: _.debounce(function (newTitle) {
       this.$store.dispatch('timeline/updateGroupAction', {
-                    group: this.editGroup,
+                    groupId: this.editGroupId,
                     changes: { title: newTitle },
                   })
     }, 300),
     handleColorChange: _.debounce(function (newColor) {
       this.$store.dispatch('timeline/updateGroupAction', {
-                    group: this.editGroup,
+                    groupId: this.editGroupId,
                     changes: { background: newColor },
                   })
     }, 300)

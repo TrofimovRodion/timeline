@@ -110,15 +110,24 @@ export default {
         }
     },
     
-    [removeGroupMutation](state, { group }) {
-        //const timeline = group.timeline;
-        state.groups = state.groups.filter(gr => (gr._id != group._id));
-        this.commit('timeline/updateGroupEventsMutation', group)
+    [removeGroupMutation](state, { groupId }) {
+        if (groupId == state.selectedGroupId) {
+            state.selectedGroupId = null
+        }
+        state.groups = state.groups.filter(gr => (gr._id != groupId));
+        //const group = this.getters['timeline/getGroupById'](groupId);
+        //this.commit('timeline/updateGroupEventsMutation', group)
     },
-    [updateGroupMutation](state, { group, changes }) {
+    [updateGroupMutation](state, { groupId, changes }) {
+        let group = this.getters['timeline/getGroupById'](groupId);
         for (let i in changes) {
             group[i] = changes[i]
         }
         group.foreground = getContrastColor(group.background);
+        let maxLines = 1;
+        group.events.forEach(event => {
+            maxLines = Math.max(maxLines,event.line+1)
+        });
+        group.lines = maxLines
     }
 }

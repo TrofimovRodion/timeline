@@ -76,7 +76,7 @@
         </v-col>
       </v-row>
 
-      <v-row dense>
+      <v-row dense align="center">
         <v-col>
           <v-text-field v-model="customColor" :mask="mask" return-masked-value hide-details class="ma-0 pa-0" solo>
             <template v-slot:append>
@@ -92,6 +92,9 @@
               </v-menu>
             </template>
           </v-text-field>
+        </v-col>
+        <v-col v-if="editEvent.color" class="col-2">
+          <v-btn icon @click="dropColor"><v-icon>mdi-close</v-icon></v-btn>
         </v-col>
       </v-row>
 
@@ -168,6 +171,10 @@ export default {
     customColor: function (newVal) {
       if (!this.editEvent) return;
       if (this.editEvent.color!= newVal) {
+        let group = this.$store.getters["timeline/getGroupById"](this.editEvent.groupId);
+        if (group.background==newVal) {
+          newVal = null;
+        }
         this.editEvent.color = newVal;
         this.$store.dispatch("timeline/updateEventAction", {
           eventId: this.editEventId,
@@ -194,6 +201,15 @@ export default {
     }
   },
   methods: {
+    dropColor() {
+        this.editEvent.color = null;
+        let group = this.$store.getters["timeline/getGroupById"](this.editEvent.groupId);
+        this.customColor = group.background
+        this.$store.dispatch("timeline/updateEventAction", {
+          eventId: this.editEventId,
+          changes: { color: null }
+        })
+    },
     remove() {
       this.$store.dispatch("timeline/removeEventAction", this.editEventId);
     },

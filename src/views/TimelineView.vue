@@ -67,7 +67,8 @@
 
 .newGroup {
   height:250px;
-  padding: 4px 8px;
+  padding: 8px 8px;
+  pointer-events: auto;
 }
 
 .timelineEvents {
@@ -104,11 +105,11 @@
                       :style="{color:group.background,borderLeft:'4px solid '+group.background}">
                       <div class="groupHeaderTitle"
                         @click="selectGroup($event, group)"
-                      >{{group.title}}</div>
+                      >{{group.title?group.title:"Untitled"}}</div>
                     </div>
                 </div>
                 <div class="newGroup">
-                  <v-btn depressed small outlined @click="createGroup({title:'New group'})">
+                  <v-btn  color="primary" text @click="createGroup({title:'New group'})">
                   <v-icon left>mdi-plus</v-icon>
                     New group
                   </v-btn>

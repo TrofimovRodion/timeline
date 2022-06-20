@@ -33,19 +33,19 @@ export default {
         let data = (await axios.post(url + 'timeline/' + timelineId + '/events/' + eventId + '/update', { changes: changes })).data
         return data;
     },
-    async removeEvent(eventId) {
-        await axios.post(url + 'timeline/' + event.timelineId + '/events/' + eventId + '/remove')
+    async removeEvent(timelineId, eventId) {
+        await axios.post(url + 'timeline/' + timelineId + '/events/' + eventId + '/remove')
     },
     async createGroup(timelineId, details) {
         let data = (await axios.post(url + 'timeline/' + timelineId + '/groups/create', details)).data
         return data;
     },
-    async updateGroup(group, changes) {
-        let data = (await axios.post(url + 'timeline/' + group.timelineId + '/groups/' + group._id + '/update', { changes: changes })).data
+    async updateGroup(timelineId, groupId, changes) {
+        let data = (await axios.post(url + 'timeline/' + timelineId + '/groups/' + groupId + '/update', { changes: changes })).data
         return data;
     },
-    async removeGroup(group) {
-        await axios.post(url + 'timeline/' + group.timelineId + '/groups/' + group._id + '/remove')
+    async removeGroup(timelineId, groupId) {
+        await axios.post(url + 'timeline/' + timelineId + '/groups/' + groupId + '/remove')
     },
     async loadData(fileId, startDate, endDate) {
         let data = (await axios.post(url + 'timeline/' + fileId, {
