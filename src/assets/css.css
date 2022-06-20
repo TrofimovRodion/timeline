@@ -41,14 +41,6 @@ html,body {
 text {
     font-size:0.8em;
 }
-.groupTitleWrap {
-    display: table-cell;
-    vertical-align: middle;
-}
-.groupTitle {
-    font-size:0.8em;
-    font-weight: bold;
-}
 .panels {
     display: flex;
     align-items:stretch;

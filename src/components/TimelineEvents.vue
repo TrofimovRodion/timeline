@@ -31,7 +31,7 @@
   box-shadow: 0px 1px 4px #00000055;
 }
 .event:hover {
-  margin-top:-2px;
+  text-decoration:underline;
   box-shadow: 0px 3px 7px #00000055;
 }
 .event.selected {
@@ -343,11 +343,10 @@ export default {
       }
     },
     selectEvent(e, displayEvent) {
-      this.timeline.selectedEventId = displayEvent.event._id;
-      this.timeline.selectedEventRepeatNum = displayEvent.repeatNum;
       this.$store.dispatch("selectEventAction", {
         event: displayEvent.event,
         date_start: displayEvent.event.date_start,
+        repeatNum: displayEvent.repeatNum,
         startcellnum: displayEvent.startcellnum,
         duration: displayEvent.event.duration
       });
@@ -384,6 +383,7 @@ export default {
           event.duration = duration;
           this.$store.dispatch("selectEventAction", {
             event: this.selectedLocalEvent.event,
+            repeatNum: this.selectedLocalEvent.repeatNum,
             startcellnum: displayEvent.startcellnum,
             duration: duration
           });
@@ -444,6 +444,7 @@ export default {
         if (this.timeline.selectedEventId == displayEvent.event._id) {
           this.$store.dispatch("selectEventAction", {
             event: this.selectedLocalEvent.event,
+            repeatNum: this.selectedLocalEvent.repeatNum,
             date_start: displayEvent.event.date_start,
             startcellnum: displayEvent.startcellnum,
             duration: displayEvent.event.duration

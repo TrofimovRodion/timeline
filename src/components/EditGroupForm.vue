@@ -1,10 +1,4 @@
 <template>
-  <v-dialog
-    v-model="innerDisplay"
-    v-if="editGroup !== null"
-    width="500"
-    @click:outside="close()"
-  >
     <v-card>
       <v-card-title class="text-h5 grey lighten-2"> Edit group </v-card-title>
 
@@ -50,7 +44,6 @@
         <v-btn color="primary" text @click="close()"> Close </v-btn>
       </v-card-actions>
     </v-card>
-  </v-dialog>
 </template>
 <script>
 import _ from 'lodash'

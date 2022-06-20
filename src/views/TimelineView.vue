@@ -8,33 +8,51 @@
   left: 20px;
 }
 
-.groupTitles {
-  position: sticky;
-  z-index: 2;
-  left: 0px;
-}
-
-.groupTitlesWrap {
-  background: linear-gradient(to right, #fffffff9 30%, #ffffff00);
+.groupHeadersWrap {
   width: 200px;
-  padding: 5px;
   height:500px;
   top:50px;
   position:absolute;
+  pointer-events:none;
+}
+
+.groupHeaderBackground {
+  background: linear-gradient(to right, #fffffff9 30%, #ffffff00);
+  position:absolute;
+  width: 200px;
+  pointer-events:none;
 }
 
 @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
-  .groupTitlesWrap {
+  .groupHeaderBackground {
     mask-image: linear-gradient(to right, #fff 30%, #ffffff00);
     background: linear-gradient(to right, #ffffffaa, #ffffff00);
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(5px);
   }
 }
 
-.groupTitle {
-  position:initial;
-  padding:4px 8px;
+.groupHeader {
+  position:relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.groupHeaderTitleWrap {
+  position:absolute;
   border-radius:4px;
+  bottom:1px;
+  top:2px;
+  left:4px;
+  padding:4px 8px;
+  font-size:0.8em;
+  font-weight: bold;
+}
+.groupHeaderTitle {
+  pointer-events: auto;
+  cursor:pointer;
+}
+.groupHeaderTitle:hover {
+  text-decoration: underline;
 }
 
 .newGroup {
@@ -62,15 +80,22 @@
     <v-main style="height:100%">
       <div class="panels" ref="panels">
         <div class="panel mainPanel">
-          <EditGroupDialog :editGroupId="editGroupId" :display="editGroupDialog.display" @close="saveGroupDialog" />
-
-
           <div id="timeline" class="timeline" ref="timeline" @scroll="handleScroll($event.currentTarget)">
             <TimelineEvents class='timelineEvents' :style="{width:display.width, height:display.height}"></TimelineEvents>
             <div class='timelineGroups'>
-              <div class="groupTitlesWrap" :style="{height:display.height}">
-                <div class="groupTitle" v-for="group in display.groups" :key="group.key"
-                  :style="{height:group.lines*lineHeight+'px',color:group.background,borderLeft:'4px solid '+group.background}">{{group.title}}</div>
+              <div class="groupHeadersWrap" :style="{height:display.height}">
+                <div class="groupHeader" v-for="group in display.groups" :key="group.key"
+                  :style="{height:(group.lines*lineHeight)+'px'}"
+                  >
+                    <div class="groupHeaderBackground"
+                      :style="{height:(group.lines*lineHeight-1)+'px'}"></div>
+                    <div class="groupHeaderTitleWrap"
+                      :style="{color:group.background,borderLeft:'4px solid '+group.background}">
+                      <div class="groupHeaderTitle"
+                        @click="selectGroup($event, group)"
+                      >{{group.title}}</div>
+                    </div>
+                </div>
                 <div class="newGroup">
                   <v-btn depressed small outlined @click="createGroup({title:'New group'})">
                   <v-icon left>mdi-plus</v-icon>
@@ -102,6 +127,7 @@
             @dragend="handleSplitterDragEnd" draggable="true"></div>
           <EditTimelineFrom v-if="!timeline.selectedEventId"></EditTimelineFrom>
           <EditEventForm v-if="timeline.selectedEventId" :editEventId="timeline.selectedEventId"></EditEventForm>
+          <EditGroupForm v-if="timeline.selectedGroupId" :editGroupId="timeline.selectedGroupId"></EditGroupForm>
         </div>
       </div>
     </v-main>
@@ -111,12 +137,12 @@
 
 <script>
 import { mapState } from "vuex";
-import EditGroupDialog from "../components/EditGroupDialog.vue";
 import NavigationBar from "../components/NavigationBar.vue";
 import TimelineDays from "../components/TimelineDays.vue";
 import TimelineEvents from "../components/TimelineEvents.vue";
 import EditEventForm from "../components/EditEventForm.vue";
 import EditTimelineFrom from "../components/EditTimelineForm.vue";
+import EditGroupForm from "../components/EditGroupForm.vue";
 import { DateTime } from "luxon";
 import _ from "lodash";
 
@@ -127,12 +153,12 @@ export default {
   name: "TimelineView",
 
   components: {
-    EditGroupDialog,
     NavigationBar,
     TimelineDays,
     TimelineEvents,
     EditEventForm,
     EditTimelineFrom,
+    EditGroupForm,
   },
   mounted() {
     this.panelWidth = localStorage.getItem('rightPanelWidth');
@@ -258,6 +284,11 @@ export default {
     },
     createGroup(params) {
       this.$store.dispatch("timeline/createGroupAction", params);
+    },
+    selectGroup(e, displayGroup) {
+      let group = this.$store.getters["timeline/getGroupById"](displayGroup._id);
+      this.$store.dispatch("selectGroupAction", {group:group});
+      e.stopPropagation();
     },
     createEvent(groupNum, params) {
       this.$store.dispatch("timeline/createEventAction", {

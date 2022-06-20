@@ -19,23 +19,40 @@ export default new Vuex.Store({
   },
   getters: {},
   mutations: {
-    selectEventMutation(state, { event, startcellnum, duration }) {
+    selectEventMutation(state, { event, startcellnum, repeatNum, duration }) {
       if (!event) {
         state.highlightedDays.start = null
         state.highlightedDays.end = null
         return;
       }
+      if (event) {
+        state.timeline.selectedEventId = event._id;
+        state.timeline.selectedEventRepeatNum = repeatNum;
+      } else {
+        state.timeline.selectedEventId = 0;
+        state.timeline.selectedEventRepeatNum = 0;
+      }
       let start = DateTime.fromISO(state.fromDate).plus({days:startcellnum});
       state.highlightedDays.start = start
       state.highlightedDays.end =  start.plus({days:duration})
+    },
+    selectGroupMutation(state, {group}) {
+      if (!group) {
+        state.timeline.selectedGroupId = 0;
+        return;
+      }
+      state.timeline.selectedGroupId = group._id;
     },
     updateCellWidthMutation(state, {cellWidth}) {
         state.cellWidth = cellWidth;
     },
   },
   actions: {
-    selectEventAction({ commit }, { event, startcellnum, duration }) {
-      commit("selectEventMutation", { event: event, startcellnum:startcellnum, duration:duration })
+    selectEventAction({ commit }, { event, startcellnum, duration, repeatNum }) {
+      commit("selectEventMutation", { event: event, startcellnum:startcellnum, duration:duration, repeatNum:repeatNum })
+    },
+    selectGroupAction({ commit }, { group }) {
+      commit("selectGroupMutation", { group: group })
     },
     setCellWidth({commit}, {cellWidth}) {
       commit("updateCellWidthMutation", {cellWidth:cellWidth});

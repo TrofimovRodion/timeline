@@ -6,6 +6,7 @@ const state = {
     id: null,
     selectedEventId:null,
     selectedEventRepeatNum:null,
+    selectedGroupId:null,
     title: '',
     timeline: {},
     groups: []
