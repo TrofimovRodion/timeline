@@ -36,6 +36,15 @@
             type="number"></v-text-field>
         </v-col>
       </v-row>
+      <v-row dense>
+        <v-col>
+          <v-select 
+           :items="groups"
+           :value = "editEvent.groupId"
+           @change = "changeGroup($event)"
+           label="Group" dense></v-select>
+        </v-col>
+      </v-row>
 
       <v-row dense>
         <v-col>
@@ -137,6 +146,9 @@ export default {
     };
   },
   computed: {
+    groups() {
+      return this.$store.getters["timeline/getAllGroups"]().map(group=>{ return {text:group.title,value:group._id}})
+    },
     editEvent() {
       let event = this.$store.getters["timeline/getEventById"](this.timeline.selectedEventId);
       return event
@@ -201,6 +213,13 @@ export default {
     }
   },
   methods: {
+    async changeGroup(groupId) {
+      this.$store.dispatch("timeline/moveEventToGroupAction", {
+        eventId: this.editEventId,
+        newGroupId: groupId
+      })
+      
+    },
     dropColor() {
         this.editEvent.color = null;
         let group = this.$store.getters["timeline/getGroupById"](this.editEvent.groupId);

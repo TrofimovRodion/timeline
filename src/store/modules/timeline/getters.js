@@ -1,4 +1,7 @@
 export default {
+    getAllGroups: (state) => () => {
+        return state.groups;
+    },
     getGroupById: (state) => (groupId) => {
         for (let i = 0; i < state.groups.length; i++) {
             if (state.groups[i]._id == groupId) return state.groups[i];

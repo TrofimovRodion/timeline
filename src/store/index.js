@@ -19,8 +19,8 @@ export default new Vuex.Store({
   },
   getters: {},
   mutations: {
-    selectEventMutation(state, { event, startcellnum, repeatNum, duration }) {
-      if (!event) {
+    selectEventMutation(state, { eventId, repeatNum }) {
+      if (!eventId) {
         state.highlightedDays.start = null
         state.highlightedDays.end = null
         state.timeline.selectedEventId = 0;
@@ -28,11 +28,12 @@ export default new Vuex.Store({
         return;
       }
       
-      state.timeline.selectedEventId = event._id;
+      state.timeline.selectedEventId = eventId;
+      let event = this.getters['timeline/getEventById'](eventId);
       state.timeline.selectedEventRepeatNum = repeatNum;
-      let start = DateTime.fromISO(state.fromDate).plus({days:startcellnum});
+      let start = DateTime.fromISO(event.date_start)//DateTime.fromISO(state.fromDate).plus({days:startcellnum});
       state.highlightedDays.start = start
-      state.highlightedDays.end =  start.plus({days:duration})
+      state.highlightedDays.end =  start.plus({days:event.duration})
     },
     selectGroupMutation(state, {group}) {
       if (!group) {
@@ -46,12 +47,12 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    selectEventAction({ commit }, { event, startcellnum, duration, repeatNum }) {
+    selectEventAction({ commit }, { eventId, repeatNum }) {
       commit("selectGroupMutation", { group: null })
-      commit("selectEventMutation", { event: event, startcellnum:startcellnum, duration:duration, repeatNum:repeatNum })
+      commit("selectEventMutation", { eventId: eventId, repeatNum:repeatNum })
     },
     selectGroupAction({ commit }, { group }) {
-      commit("selectEventMutation", { event: null })
+      commit("selectEventMutation", { eventId: null })
       commit("selectGroupMutation", { group: group })
     },
     setCellWidth({commit}, {cellWidth}) {

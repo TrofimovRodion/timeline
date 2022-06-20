@@ -1,4 +1,4 @@
-import { loadTimelineAction, createGroupAction, createEventAction, updateEventAction, setCurrentTimelineMutation, appendGroupMutation, appendEventMutation, updateEventMutation, removeEventAction, removeEventMutation, removeGroupAction, updateGroupAction, removeGroupMutation, updateGroupMutation, updateTimelineAction, removeTimelineAction, updateTimelineMutation } from './types.js'
+import { loadTimelineAction, createGroupAction, createEventAction, updateEventAction, updateGroupEventsMutation, setCurrentTimelineMutation, appendGroupMutation, appendEventMutation, updateEventMutation, removeEventAction, removeEventMutation, removeGroupAction, updateGroupAction, removeGroupMutation, updateGroupMutation, updateTimelineAction, removeTimelineAction, updateTimelineMutation } from './types.js'
 import timelineApi from '@/api/timeline'
 import { changeHue } from '../../../utils/index'
 
@@ -46,7 +46,7 @@ export default {
         }
         let group = this.state.timeline.groups[groupNum];
         newEvent = await timelineApi.createEvent(this.state.timeline.timeline._id, group._id, newEvent)
-        commit(appendEventMutation, { groupNum: groupNum, eventDetails: newEvent })
+        commit(appendEventMutation, { groupId: group._id, eventDetails: newEvent })
     },
     async [removeEventAction]({ commit }, eventId) {
         await timelineApi.removeEvent(this.state.timeline.timeline._id, eventId);
@@ -56,6 +56,24 @@ export default {
         commit(updateEventMutation, { eventId: eventId, changes: changes })
         // this is wrong but let's try to update faster for faster ui feedback
         await timelineApi.updateEvent(this.state.timeline.timeline._id, eventId, changes);
+    },
+    async moveEventToGroupAction({ commit }, { eventId, newGroupId }) {
+        let event = this.getters['timeline/getEventById'](eventId);
+        let oldGroupId = event.groupId;
+        event = await timelineApi.updateEvent(this.state.timeline.timeline._id, eventId, {groupId:newGroupId});
+        let selectedEventId = this.state.timeline.selectedEventId;
+        let selectedEventRepeatNum = this.state.timeline.selectedEventRepeatNum;
+        commit(removeEventMutation, { eventId: eventId })
+        commit(appendEventMutation, { groupId: newGroupId, eventDetails: event })
+        let oldGroup = this.getters['timeline/getGroupById'](oldGroupId);
+        commit(updateGroupEventsMutation, { group: oldGroup })
+        commit(updateGroupMutation, { groupId:oldGroupId, changes:{} })
+        let newGroup = this.getters['timeline/getGroupById'](newGroupId);
+        commit(updateGroupEventsMutation, { group: newGroup })    
+        commit(updateGroupMutation, { groupId:newGroupId, changes:{} })
+        if (selectedEventId == eventId) {
+            this.dispatch('selectEventAction', {eventId:eventId, repeatNum: selectedEventRepeatNum})
+        }
     },
     async [removeGroupAction]({ commit }, groupId) {
         await timelineApi.removeGroup(this.state.timeline.timeline._id, groupId);

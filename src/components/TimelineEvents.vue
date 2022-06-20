@@ -347,16 +347,13 @@ export default {
     },
     selectEvent(e, displayEvent) {
       this.$store.dispatch("selectEventAction", {
-        event: displayEvent.event,
-        date_start: displayEvent.event.date_start,
+        eventId: displayEvent.event._id,
         repeatNum: displayEvent.repeatNum,
-        startcellnum: displayEvent.startcellnum,
-        duration: displayEvent.event.duration
       });
       e.stopPropagation();
     },
     deselectEvent() {
-      this.$store.dispatch("selectEventAction", { event: null });
+      this.$store.dispatch("selectEventAction", { eventId: null });
     },
     handleEventExpanderDragStart(e, displayEvent) {
       e.dataTransfer.setDragImage(dragImage, 0, 0);
@@ -383,10 +380,8 @@ export default {
         if(event.duration!=duration) {
           event.duration = duration;
           this.$store.dispatch("selectEventAction", {
-            event: this.selectedLocalEvent.event,
-            repeatNum: this.selectedLocalEvent.repeatNum,
-            startcellnum: displayEvent.startcellnum,
-            duration: duration
+            eventId: this.selectedLocalEvent.event._id,
+            repeatNum: this.selectedLocalEvent.repeatNum
           });
         }
       },10),
@@ -444,11 +439,8 @@ export default {
         this.$forceUpdate();
         if (this.timeline.selectedEventId == displayEvent.event._id) {
           this.$store.dispatch("selectEventAction", {
-            event: this.selectedLocalEvent.event,
-            repeatNum: this.selectedLocalEvent.repeatNum,
-            date_start: displayEvent.event.date_start,
-            startcellnum: displayEvent.startcellnum,
-            duration: displayEvent.event.duration
+            eventId: this.selectedLocalEvent.event._id,
+            repeatNum: this.selectedLocalEvent.repeatNum
           });
         }
       }

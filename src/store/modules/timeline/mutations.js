@@ -35,7 +35,7 @@ export default {
         })
         for (let e in group.events) {
             this.commit('timeline/appendEventMutation', {
-                groupNum: state.groups.length - 1,
+                groupId: group._id,
                 eventDetails: group.events[e],
                 skipUpdate: skipUpdate ? true : false
             });
@@ -83,12 +83,10 @@ export default {
             top += gr.lines;
         }
     },
-    [appendEventMutation](state, { groupNum, eventDetails, skipUpdate }) {
+    [appendEventMutation](state, { groupId, eventDetails, skipUpdate }) {
         let newEvent = Object.assign({}, eventDetails);
-        const group = state.groups[groupNum];
-        //newEvent.group = state.groups[groupNum]
-        //newEvent.timeline = state.groups[groupNum].timeline
-        state.groups[groupNum].events.push(newEvent)
+        const group = this.getters['timeline/getGroupById'](groupId)
+        group.events.push(newEvent)
         if (!skipUpdate) {
             this.commit('timeline/updateGroupEventsMutation', group)
         }
@@ -115,8 +113,6 @@ export default {
             state.selectedGroupId = null
         }
         state.groups = state.groups.filter(gr => (gr._id != groupId));
-        //const group = this.getters['timeline/getGroupById'](groupId);
-        //this.commit('timeline/updateGroupEventsMutation', group)
     },
     [updateGroupMutation](state, { groupId, changes }) {
         let group = this.getters['timeline/getGroupById'](groupId);
