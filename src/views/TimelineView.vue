@@ -92,6 +92,7 @@
                     <div class="groupHeaderTitleWrap"
                       :style="{color:group.background,borderLeft:'4px solid '+group.background}">
                       <div class="groupHeaderTitle"
+                        :style="{textDecoration:timeline.selectedGroupId==group._id?'underline':''}"
                         @click="selectGroup($event, group)"
                       >{{group.title}}</div>
                     </div>
@@ -125,7 +126,7 @@
         <div class="panel rightPanel elevation-5" :style="`min-width:` + panelWidth + `px`" ref="rightPanel">
           <div class="panelSplitter" @dragstart="handleSplitterDragStart" @drag="handleSplitterDrag"
             @dragend="handleSplitterDragEnd" draggable="true"></div>
-          <EditTimelineFrom v-if="!timeline.selectedEventId"></EditTimelineFrom>
+          <EditTimelineFrom v-if="!timeline.selectedEventId && !timeline.selectedGroupId"></EditTimelineFrom>
           <EditEventForm v-if="timeline.selectedEventId" :editEventId="timeline.selectedEventId"></EditEventForm>
           <EditGroupForm v-if="timeline.selectedGroupId" :editGroupId="timeline.selectedGroupId"></EditGroupForm>
         </div>

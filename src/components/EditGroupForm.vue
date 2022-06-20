@@ -1,11 +1,10 @@
 <template>
-    <v-card>
-      <v-card-title class="text-h5 grey lighten-2"> Edit group </v-card-title>
+    <v-card flat>
+      <v-card-title> Edit group </v-card-title>
 
       <v-card-text>
-        <v-container>
-          <v-row>
-            <v-col cols="12" sm="6" md="4">
+          <v-row dense>
+            <v-col>
               <v-text-field
                 label="Title"
                 required
@@ -15,7 +14,7 @@
               ></v-text-field>
             </v-col>
           </v-row>          
-          <v-row>
+          <v-row dense>
             <v-col>
               <v-text-field v-model="editGroup.background" :mask="mask" return-masked-value hide-details class="ma-0 pa-0" solo>
                 <template v-slot:append>
@@ -33,15 +32,12 @@
               </v-text-field>
             </v-col>
           </v-row>
-        </v-container>
       </v-card-text>
 
       <v-divider></v-divider>
 
       <v-card-actions>
         <v-btn color="primary" text @click="remove()"> Remove </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="close()"> Close </v-btn>
       </v-card-actions>
     </v-card>
 </template>

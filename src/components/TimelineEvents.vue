@@ -260,7 +260,7 @@ export default {
     },
     newEventHandlerStyle() {
       let style = "min-width:"+this.cellWidth+"px;";
-      if (this.timeline.selectedEventId) {
+      if (this.timeline.selectedEventId || this.timeline.selectedGroupId) {
         style += "display:none;";
       } else {
         style += "left:" + this.handlerPos.x + "px;";
@@ -276,10 +276,11 @@ export default {
       style += "top:" + displayGroup.top * this.lineHeight + "px;";
       style += "min-height:" + displayGroup.group.lines * this.lineHeight + "px;";
       if (
-        this.timeline.selectedEventId &&
+        (this.timeline.selectedEventId &&
         this.$store.getters["timeline/getEventById"](
           this.timeline.selectedEventId
-        ).groupId == displayGroup.group._id
+        ).groupId == displayGroup.group._id) ||
+        (this.timeline.selectedGroupId == displayGroup.group._id)
       ) {
         style += "background:#00000008;";
       }
@@ -312,6 +313,8 @@ export default {
     handleClickCanvas(e) {
       if (this.timeline.selectedEventId) {
         this.deselectEvent();
+      } else if (this.timeline.selectedGroupId) {
+        this.$store.dispatch("selectGroupAction", { group: null });
       } else {
         let rect = e.currentTarget.getBoundingClientRect();
         let dayNum = Math.round(
@@ -353,8 +356,6 @@ export default {
       e.stopPropagation();
     },
     deselectEvent() {
-      this.timeline.selectedEventId = 0;
-      this.timeline.selectedEventRepeatNum = 0; 
       this.$store.dispatch("selectEventAction", { event: null });
     },
     handleEventExpanderDragStart(e, displayEvent) {

@@ -23,15 +23,13 @@ export default new Vuex.Store({
       if (!event) {
         state.highlightedDays.start = null
         state.highlightedDays.end = null
-        return;
-      }
-      if (event) {
-        state.timeline.selectedEventId = event._id;
-        state.timeline.selectedEventRepeatNum = repeatNum;
-      } else {
         state.timeline.selectedEventId = 0;
         state.timeline.selectedEventRepeatNum = 0;
+        return;
       }
+      
+      state.timeline.selectedEventId = event._id;
+      state.timeline.selectedEventRepeatNum = repeatNum;
       let start = DateTime.fromISO(state.fromDate).plus({days:startcellnum});
       state.highlightedDays.start = start
       state.highlightedDays.end =  start.plus({days:duration})
@@ -49,9 +47,11 @@ export default new Vuex.Store({
   },
   actions: {
     selectEventAction({ commit }, { event, startcellnum, duration, repeatNum }) {
+      commit("selectGroupMutation", { group: null })
       commit("selectEventMutation", { event: event, startcellnum:startcellnum, duration:duration, repeatNum:repeatNum })
     },
     selectGroupAction({ commit }, { group }) {
+      commit("selectEventMutation", { event: null })
       commit("selectGroupMutation", { group: group })
     },
     setCellWidth({commit}, {cellWidth}) {
