@@ -17,5 +17,14 @@ export default {
             }
         }
         return null
+    },
+    hasConnection:(state)=>(eventId,targetEventId) => {
+        let connection;
+        for(let i=0;i<state.connections.length;i++) {
+            connection = state.connections[i];
+            if (connection.eventId == eventId && connection.targetEventId == targetEventId) return true;
+            if (connection.eventId == targetEventId && connection.targetEventId == eventId) return true;
+        }
+        return false;
     }
 }

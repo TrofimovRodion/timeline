@@ -9,7 +9,8 @@ const state = {
     selectedGroupId:null,
     title: '',
     timeline: {},
-    groups: []
+    groups: [],
+    connections: []
 }
 
 export default {

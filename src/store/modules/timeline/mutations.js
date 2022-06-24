@@ -6,6 +6,7 @@ export default {
     [setCurrentTimelineMutation](state, timelineDetails) {
         state.timeline = timelineDetails;
         this.commit('timeline/setGroupsMutation', timelineDetails.groups);
+        this.commit('timeline/setConnectionsMutation', timelineDetails.connections);
     },
     [updateTimelineMutation](state, { timeline, changes }) {
         //state.timeline.timeline = changes;
@@ -17,6 +18,12 @@ export default {
         state.groups = [];
         for (let g in groups) {
             this.commit('timeline/appendGroupMutation', { group: groups[g] })
+        }
+    },
+    setConnectionsMutation(state, connections) {
+        state.connections = [];
+        for (let c in connections) {
+            this.commit('timeline/addConnectionMutation', connections[c])
         }
     },
     [appendGroupMutation](state, { group, skipUpdate }) {
@@ -125,5 +132,18 @@ export default {
             maxLines = Math.max(maxLines,event.line+1)
         });
         group.lines = maxLines
+    },
+    addConnectionMutation(state, {eventId, eventRepeatNum, targetEventId,targetEventRepeatNum}) {
+        state.connections.push({
+            eventId:eventId,
+            eventRepeatNum:eventRepeatNum,
+            targetEventId:targetEventId,
+            targetEventRepeatNum:targetEventRepeatNum
+        })
+    },
+    removeConnectionMutation(state, {eventId}) {
+        state.connections = state.connections.filter(el=>{
+            return !(el.eventId==eventId)
+        })
     }
 }

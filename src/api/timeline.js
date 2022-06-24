@@ -47,6 +47,16 @@ export default {
     async removeGroup(timelineId, groupId) {
         await axios.post(url + 'timeline/' + timelineId + '/groups/' + groupId + '/remove')
     },
+    async connectEvents(timelineId, eventId, eventRepeatNum, targetEventId, targetEventRepeatNum) {
+        await axios.post(url+'timeline/'+timelineId + '/events/'+eventId+'/connect', {
+            eventRepeatNum:eventRepeatNum,
+            targetEventId:targetEventId,
+            targetEventRepeatNum:targetEventRepeatNum
+        })
+    },
+    async disconnectEvent(timelineId, eventId) {
+        await axios.post(url+'timeline/'+timelineId + '/events/'+eventId+'/disconnect', {})
+    },
     async loadData(fileId, startDate, endDate) {
         let data = (await axios.post(url + 'timeline/' + fileId, {
             startDate: startDate,
