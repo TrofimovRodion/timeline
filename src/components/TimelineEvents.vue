@@ -265,6 +265,8 @@ export default {
       dragStart: {},
       expanderDragStart: {},
       handlerPos: { x: -100, y: -100 },
+      movedEvents: [],
+      updatedMovedEvents:[]
     };
   },
   computed: {
@@ -613,6 +615,8 @@ export default {
       };
     },
     moveEvent:function (displayEvent, cellsDiff, linesDiff) {
+      if (this.movedEvents.indexOf(displayEvent.event._id)!=-1) return;
+      this.movedEvents.push(displayEvent.event._id);
       let event = this.$store.getters["timeline/getEventById"](
         displayEvent.event._id
       );
@@ -647,6 +651,7 @@ export default {
       for (let i=0;i<displayEvent.connections.length;i++) {
         this.moveEvent(displayEvent.connections[i], cellsDiff, 0);
       }
+      this.movedEvents = []
     },
     handleEventDrag:_.throttle(function(e, displayEvent) {
       if (!e.clientX) return;
@@ -662,6 +667,8 @@ export default {
       this.moveEvent(displayEvent,cellsDiff,linesDiff);
     },10),
     updateEventOnMoveEnd(displayEvent) {
+      if (this.updatedMovedEvents.indexOf(displayEvent.event._id)!=-1) return;
+      this.updatedMovedEvents.push(displayEvent.event._id);
       this.$store.dispatch("timeline/updateEventAction", {
         eventId: displayEvent.event._id,
         changes: {
@@ -672,6 +679,7 @@ export default {
       for (let i=0;i<displayEvent.connections.length;i++) {
         this.updateEventOnMoveEnd(displayEvent.connections[i]);
       }
+      this.updatedMovedEvents = [];
     },
     handleEventDragEnd(e, displayEvent) {
       this.updateEventOnMoveEnd(displayEvent)
