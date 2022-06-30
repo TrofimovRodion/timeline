@@ -172,6 +172,14 @@ export default {
     EditTimelineFrom,
     EditGroupForm,
   },
+  sockets: {
+    connect() {
+      this.$store.dispatch('timeline/joinTimelineSocketAction');
+    },
+    reconnect() {
+      this.$store.dispatch('timeline/joinTimelineSocketAction');
+    }
+  },
   mounted() {
     this.panelWidth = localStorage.getItem('rightPanelWidth');
     if (!this.panelWidth)
@@ -179,6 +187,7 @@ export default {
     this.$store.dispatch("timeline/loadTimelineAction", {
       timelineId: this.$route.params.timelineId,
     });
+    this.$store.dispatch('timeline/joinTimelineSocketAction');
     this.localCellWidth = this.cellWidth;
     this.scrollDate = localStorage.getItem('scrollDate-' + this.$route.params.timelineId);
     if (!this.scrollDate) this.scrollDate = DateTime.now().toISODate();

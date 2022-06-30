@@ -7,6 +7,10 @@ export default {
         let data = await timelineApi.loadData(timelineId);
         commit(setCurrentTimelineMutation, data);
     },
+    async joinTimelineSocketAction () {
+        if (!this.state.timeline.timeline._id) return;
+        this.state.io.emit('subscribeTimeline',this.state.timeline.timeline._id);
+    },
     async [updateTimelineAction]({ commit }, { timeline, changes }) {
         let updatedTimeline = await timelineApi.updateTimeline(timeline, changes)  
         commit(updateTimelineMutation, {timeline:timeline, changes:updatedTimeline});
@@ -46,7 +50,7 @@ export default {
         }
         let group = this.state.timeline.groups[groupNum];
         newEvent = await timelineApi.createEvent(this.state.timeline.timeline._id, group._id, newEvent)
-        commit(appendEventMutation, { groupId: group._id, eventDetails: newEvent })
+        //commit(appendEventMutation, { groupId: group._id, eventDetails: newEvent })
     },
     async [removeEventAction]({ commit }, eventId) {
         await timelineApi.removeEvent(this.state.timeline.timeline._id, eventId);

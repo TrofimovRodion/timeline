@@ -104,6 +104,7 @@ export default {
             state.selectedEventRepeatNum = null
         }
         const event = this.getters['timeline/getEventById'](eventId);
+        if (!event) return;
         const group = this.getters['timeline/getGroupById'](event.groupId);
         group.events = group.events.filter(ev => (ev._id != eventId));
         this.commit('timeline/updateGroupEventsMutation', group)

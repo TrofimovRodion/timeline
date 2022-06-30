@@ -15,10 +15,14 @@ export default new Vuex.Store({
     cellWidth: 25,
     highlightedDays: {
       start:null,end:null
-    }
+    },
+    io:null
   },
   getters: {},
   mutations: {
+    setSocketIO(state, {io}) {
+      state.io = io
+    },
     selectEventMutation(state, { eventId, repeatNum }) {
       if (!eventId) {
         state.highlightedDays.start = null
@@ -44,9 +48,12 @@ export default new Vuex.Store({
     },
     updateCellWidthMutation(state, {cellWidth}) {
         state.cellWidth = cellWidth;
-    },
+    }
   },
   actions: {
+    setSocketIO({commit},{io}) {
+      commit("setSocketIO", { io: io })
+    },
     selectEventAction({ commit }, { eventId, repeatNum }) {
       commit("selectGroupMutation", { group: null })
       commit("selectEventMutation", { eventId: eventId, repeatNum:repeatNum })
@@ -58,6 +65,15 @@ export default new Vuex.Store({
     setCellWidth({commit}, {cellWidth}) {
       commit("updateCellWidthMutation", {cellWidth:cellWidth});
     },
+    SOCKET_event_appended({commit}, newEvent) {
+      commit("timeline/appendEventMutation", { groupId: newEvent.groupId, eventDetails: newEvent })
+    },
+    SOCKET_event_updated({commit}, {eventId, changes}) {
+      commit("timeline/updateEventMutation", { eventId: eventId, changes: changes })
+    },
+    SOCKET_event_removed({commit}, eventId) {
+      commit("timeline/removeEventMutation", { eventId: eventId })
+    }
   },
   modules: {
     guest: guestModule,

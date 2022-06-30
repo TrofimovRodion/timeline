@@ -9,5 +9,19 @@
 
 <script>
 export default {
+  sockets:{
+    connect: function () {
+      console.log('socket to notification channel connected')
+    },
+    disconnect: function () {
+      console.log('disconnected')
+    },
+    reconnect: function () {
+      console.log('reconnected')
+    }
+  },
+  mounted() {
+    this.$store.dispatch('setSocketIO',{io:this.$socket})
+  }
 }
 </script>

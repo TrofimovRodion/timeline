@@ -7,6 +7,7 @@ const state = {
     selectedEventId:null,
     selectedEventRepeatNum:null,
     selectedGroupId:null,
+    connected:false,
     title: '',
     timeline: {},
     groups: [],
