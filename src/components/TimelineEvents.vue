@@ -373,10 +373,10 @@ export default {
         toEvent.connections.push(fromEvent);
         let newConnection = {
           path:this.getConnectionPath(
-            fromEvent.startcellnum * this.cellWidth,
-            (fromEvent.displayGroup.top + fromEvent.line + 0.5) * this.lineHeight,
-            (toEvent.startcellnum + toEvent.event.duration) * this.cellWidth,
-            (toEvent.displayGroup.top + toEvent.line + 0.5) * this.lineHeight),
+            parseInt(fromEvent.startcellnum) * this.cellWidth,
+            (parseInt(fromEvent.displayGroup.top) + parseInt(fromEvent.line) + 0.5) * this.lineHeight,
+            (parseInt(toEvent.startcellnum) + parseInt(toEvent.event.duration)) * this.cellWidth,
+            (parseInt(toEvent.displayGroup.top) + parseInt(toEvent.line) + 0.5) * this.lineHeight),
           key:conn.eventId + "-"+conn.targetEventId+"-"+conn.targetEventRepeatNum
         }
         connections.push(newConnection);
@@ -483,8 +483,8 @@ export default {
       if (this.connection.sourceEventId!=displayEvent.event._id) {
         this.connection.targetEventId = displayEvent.event._id
         this.connection.targetEventRepeatNum = displayEvent.repeatNum
-        this.connection.endX = (displayEvent.startcellnum+displayEvent.event.duration) * this.cellWidth
-        this.connection.endY = (displayEvent.displayGroup.top+displayEvent.line+0.5) * this.lineHeight - 2
+        this.connection.endX = (parseInt(displayEvent.startcellnum)+parseInt(displayEvent.event.duration)) * this.cellWidth
+        this.connection.endY = (parseInt(displayEvent.displayGroup.top)+parseInt(displayEvent.line)+0.5) * this.lineHeight - 2
       }
       e.preventDefault()
       e.stopPropagation()
@@ -493,8 +493,8 @@ export default {
       if (this.connection.sourceEventId!=displayEvent.event._id) {
         this.connection.targetEventId = displayEvent.event._id
         this.connection.targetEventRepeatNum = displayEvent.repeatNum
-        this.connection.endX = (displayEvent.startcellnum+displayEvent.event.duration) * this.cellWidth
-        this.connection.endY = (displayEvent.displayGroup.top+displayEvent.line+0.5) * this.lineHeight - 2
+        this.connection.endX = (parseInt(displayEvent.startcellnum)+parseInt(displayEvent.event.duration)) * this.cellWidth
+        this.connection.endY = (parseInt(displayEvent.displayGroup.top)+parseInt(displayEvent.line)+0.5) * this.lineHeight - 2
       }
       e.preventDefault()
       e.stopPropagation()
