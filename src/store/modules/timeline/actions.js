@@ -11,26 +11,26 @@ export default {
         if (!this.state.timeline.timeline._id) return;
         this.state.io.emit('subscribeTimeline',this.state.timeline.timeline._id);
     },
-    async [updateTimelineAction]({ commit }, { timeline, changes }) {
-        let updatedTimeline = await timelineApi.updateTimeline(timeline, changes)  
-        commit(updateTimelineMutation, {timeline:timeline, changes:updatedTimeline});
+    async [updateTimelineAction]({ commit }, { timelineId, changes }) {
+        await timelineApi.updateTimeline(timelineId, changes)  
+        commit(updateTimelineMutation, {timelineId:timelineId, changes:changes});
     },
     async [removeTimelineAction](e, { timelineId }) {
          timelineApi.removeTimeline(timelineId)  
         alert(111)
         //commit(setCurrentTimelineMutation, data);
     },
-    async [createGroupAction]({ commit }, groupDetails) {
+    async [createGroupAction](context, groupDetails) {
         let group = Object.assign({
             title:"New group",
             lines:1,
             background: changeHue('#2c8ff4', Math.round(Math.random()*360))
         }, groupDetails)
 
-        let newGroup = await timelineApi.createGroup(this.state.timeline.timeline._id, group)
-        commit(appendGroupMutation, { group: newGroup })
+        await timelineApi.createGroup(this.state.timeline.timeline._id, group)
+        //commit(appendGroupMutation, { group: newGroup })
     },
-    async [createEventAction]({ commit }, { groupNum, eventDetails }) {
+    async [createEventAction]({commit}, { groupNum, eventDetails }) {
         let newEvent = Object.assign({
             title: "New event",
             duration: 5,
@@ -84,18 +84,18 @@ export default {
         commit(removeGroupMutation, { groupId: groupId })
     },
     async [updateGroupAction]({ commit }, { groupId, changes }) {
-        let updatedGroup = await timelineApi.updateGroup(this.state.timeline.timeline._id, groupId, changes);
-        commit(updateGroupMutation, { groupId: groupId, changes: updatedGroup })
+        await timelineApi.updateGroup(this.state.timeline.timeline._id, groupId, changes);
+        commit(updateGroupMutation, { groupId: groupId, changes: changes })
     },
     async connectEventsAction({commit}, {eventId, eventRepeatNum, targetEventId, targetEventRepeatNum}) {
         let connectionExists = this.getters['timeline/hasConnection'](eventId, targetEventId);
         if (connectionExists) return false;
         await timelineApi.connectEvents(this.state.timeline.timeline._id, eventId, eventRepeatNum, targetEventId, targetEventRepeatNum)
-        commit('removeConnectionMutation', {eventId:eventId})
-        commit('addConnectionMutation', { eventId: eventId, eventRepeatNum:eventRepeatNum, targetEventId: targetEventId, targetEventRepeatNum:targetEventRepeatNum })
+        commit('connectionRemovedMutation', {eventId:eventId})
+        commit('connectionAppendedMutation', { eventId: eventId, eventRepeatNum:eventRepeatNum, targetEventId: targetEventId, targetEventRepeatNum:targetEventRepeatNum })
     },
     async disconnectEventsAction({commit}, {eventId}) {
         await timelineApi.disconnectEvent(this.state.timeline.timeline._id, eventId);
-        commit('removeConnectionMutation', {eventId:eventId})
+        commit('connectionRemovedMutation', {eventId:eventId})
     }
 }

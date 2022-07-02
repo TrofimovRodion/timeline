@@ -8,10 +8,10 @@ export default {
         this.commit('timeline/setGroupsMutation', timelineDetails.groups);
         this.commit('timeline/setConnectionsMutation', timelineDetails.connections);
     },
-    [updateTimelineMutation](state, { timeline, changes }) {
-        //state.timeline.timeline = changes;
+    [updateTimelineMutation](state, { timelineId, changes }) {
+        if (state.timeline._id!=timelineId) return;
         for (let i in changes) {
-            timeline[i] = changes[i]
+            state.timeline[i] = changes[i]
         }
     },
     [setGroupsMutation](state, groups) {
@@ -23,13 +23,14 @@ export default {
     setConnectionsMutation(state, connections) {
         state.connections = [];
         for (let c in connections) {
-            this.commit('timeline/addConnectionMutation', connections[c])
+            this.commit('timeline/connectionAppendedMutation', connections[c])
         }
     },
     [appendGroupMutation](state, { group, skipUpdate }) {
         let top = (state.groups.length == 0) ? 0 : (state.groups[state.groups.length - 1].top + state.groups[state.groups.length - 1].lines);
         let backgroundColor = (group.background)?group.background:"#2c8ff4";
-
+        let groupExists = this.getters['timeline/getGroupById'](group._id)
+        if (groupExists) return;
         state.groups.push({
             _id: group._id,
             title: group.title,
@@ -134,7 +135,7 @@ export default {
         });
         group.lines = maxLines
     },
-    addConnectionMutation(state, {eventId, eventRepeatNum, targetEventId,targetEventRepeatNum}) {
+    connectionAppendedMutation(state, {eventId, eventRepeatNum, targetEventId,targetEventRepeatNum}) {
         state.connections.push({
             eventId:eventId,
             eventRepeatNum:eventRepeatNum,
@@ -142,7 +143,7 @@ export default {
             targetEventRepeatNum:targetEventRepeatNum
         })
     },
-    removeConnectionMutation(state, {eventId}) {
+    connectionRemovedMutation(state, {eventId}) {
         state.connections = state.connections.filter(el=>{
             return !(el.eventId==eventId)
         })

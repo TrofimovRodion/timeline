@@ -30,7 +30,7 @@ export default {
   methods: {
     handleInputTitle: _.debounce(function (newTitle) {
       this.$store.dispatch("timeline/updateTimelineAction", {
-        timeline: this.timeline.timeline,
+        timelineId: this.timeline.timeline._id,
         changes: {
           title: newTitle,
         },
@@ -38,7 +38,7 @@ export default {
     }, 300),
     handleInputChangelog: _.debounce(function (newChangelog) {
       this.$store.dispatch("timeline/updateTimelineAction", {
-        timeline: this.timeline.timeline,
+        timelineId: this.timeline.timeline._id,
         changes: {
           changelog: newChangelog,
         },

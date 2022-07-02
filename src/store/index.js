@@ -73,7 +73,28 @@ export default new Vuex.Store({
     },
     SOCKET_event_removed({commit}, eventId) {
       commit("timeline/removeEventMutation", { eventId: eventId })
-    }
+    },
+    SOCKET_group_appended({commit}, newGroup) {
+      commit("timeline/appendGroupMutation", { group:newGroup })
+    },
+    SOCKET_group_updated({commit}, {groupId, changes}) {
+      commit("timeline/updateGroupMutation", { groupId:groupId, changes:changes })
+    },
+    SOCKET_group_removed({commit}, groupId) {
+      commit("timeline/removeGroupMutation", {groupId:groupId})
+    },
+    SOCKET_timeline_updated({commit}, {timelineId, changes}) {
+      commit("timeline/updateTimelineMutation", {timelineId:timelineId, changes:changes})
+    },
+    SOCKET_connection_appended({commit}, params) {
+      commit("timeline/connectionAppendedMutation", params)
+    },
+    SOCKET_connection_removed({commit}, {eventId}) {
+      commit("timeline/connectionRemovedMutation", {eventId:eventId})
+    },
+    /*SOCKET_timeline_removed({commit}, timelineId) {
+      commit("timeline/updateTimelineMutation", {timelineId:timelineId, changes:changes})
+    },*/
   },
   modules: {
     guest: guestModule,

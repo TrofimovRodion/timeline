@@ -12,12 +12,12 @@ export default {
         })).data
         return data;
     },
-    async updateTimeline(timeline, changes) {
-        let data = (await axios.post(url + 'timeline/' + timeline._id + '/update', { changes: changes })).data
+    async updateTimeline(timelineId, changes) {
+        let data = (await axios.post(url + 'timeline/' + timelineId + '/update', { changes: changes })).data
         return data;
     },
-    async removeTimeline(timeline) {
-        await axios.post(url + 'timeline/' + timeline._id + '/remove')
+    async removeTimeline(timelineId) {
+        await axios.post(url + 'timeline/' + timelineId + '/remove')
     },
     async loadTimelinesList() {
         let data = (await axios.post(url + 'timeline/list')).data;
