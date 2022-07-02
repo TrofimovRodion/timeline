@@ -8,80 +8,19 @@
   left: 20px;
 }
 
-.groupHeadersWrap {
-  width: 200px;
-  height:500px;
-  top:50px;
-  position:absolute;
-  pointer-events:none;
-}
-
-.groupHeaderBackground {
-  background: linear-gradient(to right, #fffffff9 30%, #ffffff00);
-  position:absolute;
-  width: 200px;
-  pointer-events:none;
-}
-
-.groupHeader.selected .groupHeaderBackground{
-  background: linear-gradient(to right, #f9f9f9f9 50%, #f9f9f900);
-}
-
-@supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
-  .groupHeaderBackground {
-    mask-image: linear-gradient(to right, #fff 30%, #ffffff00);
-    background: linear-gradient(to right, #ffffffaa, #ffffff00);
-    backdrop-filter: blur(5px);
-  }
-  .groupHeader.selected .groupHeaderBackground{
-    background: linear-gradient(to right, #f9f9f9cc 50%, #f9f9f900);
-  }
-}
-
-.groupHeader {
-  position:relative;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-.groupHeaderTitleWrap {
-  position:absolute;
-  border-radius:4px;
-  bottom:1px;
-  top:2px;
-  left:4px;
-  padding:4px 8px;
-  font-size:0.8em;
-  font-weight: bold;
-}
-.groupHeader.selected .groupHeaderTitleWrap {
-  border-left-width: 1px!important;;
-}
-.groupHeaderTitle {
-  pointer-events: auto;
-  cursor:pointer;
-}
-.groupHeader.selected .groupHeaderTitle, .groupHeaderTitle:hover {
-  text-decoration: underline;
-}
-
-.newGroup {
-  height:250px;
-  padding: 8px 8px;
-  pointer-events: auto;
-}
-
 .timelineEvents {
-  position:absolute;
-  top:50px;
+  position: absolute;
+  top: 50px;
 }
+
 .timelineGroups {
-  position:sticky;
-  left:0px;
+  position: sticky;
+  left: 0px;
 }
+
 .timelineCalendar {
-  position:sticky;
-  top:0px;
+  position: sticky;
+  top: 0px;
 }
 </style>
 
@@ -92,30 +31,9 @@
       <div class="panels" ref="panels">
         <div class="panel mainPanel">
           <div id="timeline" class="timeline" ref="timeline" @scroll="handleScroll($event.currentTarget)">
-            <TimelineEvents class='timelineEvents' :style="{width:display.width, height:display.height}"></TimelineEvents>
-            <div class='timelineGroups'>
-              <div class="groupHeadersWrap" :style="{height:display.height}">
-                <div v-for="group in display.groups" :key="group.key"
-                  :style="{height:(group.lines*lineHeight)+'px'}"
-                  :class="{'groupHeader':true,'selected':timeline.selectedGroupId==group._id}"
-                  >
-                    <div class="groupHeaderBackground"
-                      :style="{height:(group.lines*lineHeight-1)+'px'}"></div>
-                    <div class="groupHeaderTitleWrap"
-                      :style="{color:group.background,borderLeft:'4px solid '+group.background}">
-                      <div class="groupHeaderTitle"
-                        @click="selectGroup($event, group)"
-                      >{{group.title?group.title:"Untitled"}}</div>
-                    </div>
-                </div>
-                <div class="newGroup">
-                  <v-btn  color="primary" text @click="createGroup({title:'New group'})">
-                  <v-icon left>mdi-plus</v-icon>
-                    New group
-                  </v-btn>
-                </div>
-              </div>
-            </div>
+            <TimelineEvents class='timelineEvents' :style="{ width: display.width, height: display.height }">
+            </TimelineEvents>
+            <TimelineGroups class='timelineGroups'></TimelineGroups>
             <TimelineDays class="timelineCalendar"></TimelineDays>
           </div>
           <div id="timelineActions">
@@ -152,6 +70,7 @@ import { mapState } from "vuex";
 import NavigationBar from "../components/NavigationBar.vue";
 import TimelineDays from "../components/TimelineDays.vue";
 import TimelineEvents from "../components/TimelineEvents.vue";
+import TimelineGroups from "../components/TimelineGroups.vue";
 import EditEventForm from "../components/EditEventForm.vue";
 import EditTimelineFrom from "../components/EditTimelineForm.vue";
 import EditGroupForm from "../components/EditGroupForm.vue";
@@ -168,6 +87,7 @@ export default {
     NavigationBar,
     TimelineDays,
     TimelineEvents,
+    TimelineGroups,
     EditEventForm,
     EditTimelineFrom,
     EditGroupForm,
@@ -245,11 +165,11 @@ export default {
         groups[i].events = renderedEvents;
         top += groups[i].lines;
       }
-      let width = this.cellWidth * (DateTime.fromISO(this.toDate).diff(DateTime.fromISO(this.fromDate),'days').as('days')+1);
+      let width = this.cellWidth * (DateTime.fromISO(this.toDate).diff(DateTime.fromISO(this.fromDate), 'days').as('days') + 1);
       return {
         groups: groups,
-        height:Math.max(300,top*this.lineHeight)+'px',
-        width:width+'px'
+        height: Math.max(300, top * this.lineHeight) + 'px',
+        width: width + 'px'
       };
     },
     scrollTransform: function () {
@@ -294,22 +214,6 @@ export default {
       this.createEvent(groupNum, {
         date_start: startDate.toISOString().slice(0, 10),
       });
-    },
-    handleClickEvent(groupNum, eventNum) {
-      this.editDialog.display = true;
-      this.editEventId = this.timeline.groups[groupNum].events[eventNum]._id;
-    },
-    handleClickGroup(groupId) {
-      this.editGroupDialog.display = true;
-      this.editGroupId = groupId;
-    },
-    createGroup(params) {
-      this.$store.dispatch("timeline/createGroupAction", params);
-    },
-    selectGroup(e, displayGroup) {
-      let group = this.$store.getters["timeline/getGroupById"](displayGroup._id);
-      this.$store.dispatch("selectGroupAction", {group:group});
-      e.stopPropagation();
     },
     createEvent(groupNum, params) {
       this.$store.dispatch("timeline/createEventAction", {
